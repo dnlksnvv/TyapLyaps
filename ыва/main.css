@@ -406,28 +406,32 @@ html, body {
   height: 170px !important;
   min-width: 300px !important;
   flex: 1 !important;
-  background: rgba(128, 128, 128, 0.1) !important;
+  border-left: 4px solid #ff4444 !important;
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 68, 68, 0.05) 100%) !important;
 }
 
 .tetris-card.medium-progress {
   height: 170px !important;
   min-width: 300px !important;
   flex: 1 !important;
-  background: rgba(128, 128, 128, 0.1) !important;
+  border-left: 4px solid #ffaa00 !important;
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.1) 0%, rgba(255, 170, 0, 0.05) 100%) !important;
 }
 
 .tetris-card.high-progress {
   height: 170px !important;
   min-width: 300px !important;
   flex: 1 !important;
-  background: rgba(128, 128, 128, 0.1) !important;
+  border-left: 4px solid #44ff44 !important;
+  background: linear-gradient(135deg, rgba(68, 255, 68, 0.1) 0%, rgba(68, 255, 68, 0.05) 100%) !important;
 }
 
 .tetris-card.completed {
   height: 170px !important;
   min-width: 300px !important;
   flex: 1 !important;
-  background: rgba(128, 128, 128, 0.1) !important;
+  border-left: 4px solid #00ff88 !important;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%) !important;
 }
 
 
@@ -467,13 +471,7 @@ html, body {
 /* Hover эффекты для кнопок меню */
 .sidebar-menu .menu-item:hover,
 .sidebar-menu a.menu-item:hover {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.08) 100%
-  ) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
+  background: rgba(255, 255, 255, 0.001) !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
   transform: translateY(-8px) scale(1.02) !important;
   box-shadow: 
@@ -606,6 +604,14 @@ html {
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif !important;
   background: #000000 !important;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(255, 219, 120, 0.2) 0%, transparent 50%) !important;
+  background-size: 400px 400px, 300px 300px, 500px 500px, 350px 350px !important;
+  background-attachment: fixed !important;
+  animation: floatingOrbs 20s ease-in-out infinite !important;
   color: #ffffff !important;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -659,105 +665,11 @@ body {
   background: var(--color-text-tertiary);
 }
 
-/* Modal animations */
-.animate-in {
-  animation: slideInFromRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes slideInFromRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Apple-style form inputs */
-input[type="text"], 
-input[type="number"], 
-textarea {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-
-input[type="text"]:focus, 
-input[type="number"]:focus, 
-textarea:focus {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(59, 130, 246, 0.5) !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-}
-
-/* Add Subject Button Animation */
-.tetris-card {
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-
-.tetris-card:not(.low-progress):not(.medium-progress):not(.high-progress):not(.completed) {
-  min-height: 60px !important;
-  height: 60px !important;
-}
-
-.tetris-card.low-progress,
-.tetris-card.medium-progress,
-.tetris-card.high-progress,
-.tetris-card.completed {
-  min-height: 170px !important;
-  height: 170px !important;
-}
-
-/* Smooth content transition */
-.tetris-card .relative.z-20 > div {
-  transition: all 0.3s ease-in-out;
-}
-
-/* Plus icon animation */
-.tetris-card svg {
-  transition: all 0.3s ease-in-out;
-}
-
-.tetris-card:hover svg {
-  transform: scale(1.1);
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* Apple-style buttons */
-button {
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-
-button:hover {
-  transform: translateY(-1px) !important;
-}
-
-button:active {
-  transform: translateY(0) !important;
-}
-
 /* Utility Classes */
 .glass-effect {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.glass-effect:hover {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .gradient-primary {
@@ -949,6 +861,15 @@ button:active {
   }
 }
 
+/* Fallback for browsers that don't support container queries */
+@media (max-width: 480px) {
+  
+  .tetris-card.expanded {
+    height: 170px !important;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
 
 @keyframes pulse {
   0%, 100% {
@@ -1031,21 +952,20 @@ button:active {
   }
 }
 
-/* Mobile styles - must be at the end to override other rules */
+/* Fallback for browsers that don't support container queries */
 @media (max-width: 480px) {
-  /* Override all card height rules for mobile */
-  .glass-card.tetris-card,
-  .glass-card.tetris-card.low-progress,
-  .glass-card.tetris-card.medium-progress,
-  .glass-card.tetris-card.high-progress,
-  .glass-card.tetris-card.completed {
+  .tetris-card,
+  .tetris-card.low-progress,
+  .tetris-card.medium-progress,
+  .tetris-card.high-progress,
+  .tetris-card.completed {
     height: 100px !important;
-    min-height: 100px !important;
   }
   
-  .glass-card.tetris-card.expanded {
+  
+  
+  .tetris-card.expanded {
     height: 170px !important;
-    min-height: 170px !important;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
   }

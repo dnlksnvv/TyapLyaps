@@ -1,5 +1,8 @@
 <template>
-  <div class="min-h-screen">
+  <div 
+    class="min-h-screen"
+    @click="handleBackgroundClick"
+  >
     <!-- Header -->
     <header class="glass-header sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,6 +163,7 @@
                        <h3 class="text-xl font-semibold text-white">Все предметы</h3>
                      </div>
                      
+                     <!-- Subjects Grid -->
                      <div class="tetris-grid">
                        <div
                          v-for="subject in subjects"
@@ -203,7 +207,7 @@
             <!-- Header -->
             <div class="relative z-20">
               <!-- Notification icon in top right corner -->
-              <div class="absolute top-0 right-0 z-30 notification-icon">
+              <div class="absolute top-0 right-0 z-30 notification-icon" @click.stop>
                 <svg 
                   class="w-4 h-4 transition-colors duration-200"
                   :class="subject.hasNotification ? 'text-white' : 'text-gray-500'"
@@ -264,7 +268,9 @@
                 <div class="flex flex-wrap gap-1">
                   <!-- Labs tag with dot -->
                   <span 
+                    v-if="subject.totalLabs > 0"
                     class="progress-tag bg-blue-500/20 text-blue-300 border-blue-500/30 inline-flex items-center gap-1"
+                    @click.stop
                   >
                     {{ subject.completedLabs }}/{{ subject.totalLabs }} лаб
                     <div 
@@ -275,7 +281,9 @@
                   
                   <!-- Attestations tag with dot -->
                   <span 
+                    v-if="subject.totalAttestations > 0"
                     class="progress-tag bg-green-500/20 text-green-300 border-green-500/30 inline-flex items-center gap-1"
+                    @click.stop
                   >
                     {{ subject.completedAttestations || 0 }}/{{ subject.totalAttestations || 0 }} атт
                     <div 
@@ -286,7 +294,9 @@
                   
                   <!-- Courseworks tag with dot -->
                   <span 
+                    v-if="subject.totalCourseworks > 0"
                     class="progress-tag bg-purple-500/20 text-purple-300 border-purple-500/30 inline-flex items-center gap-1"
+                    @click.stop
                   >
                     {{ subject.completedCourseworks || 0 }}/{{ subject.totalCourseworks || 0 }} курсач
                     <div 
@@ -294,7 +304,105 @@
                       :class="subject.hasCourseworkNotification ? 'bg-red-500' : 'bg-gray-500'"
                     ></div>
                   </span>
+                  
+                  <!-- Add tasks button for empty subjects -->
+                  <span 
+                    v-if="subject.totalLabs === 0 && subject.totalAttestations === 0 && subject.totalCourseworks === 0"
+                    class="progress-tag bg-gray-500/20 text-gray-500 border-gray-500/30 inline-flex items-center gap-1 cursor-pointer hover:bg-gray-500/30 transition-colors"
+                    @click.stop="addTasksToSubject(subject.id)"
+                  >
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Добавить задачи
+                  </span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Add Subject Button / Creation Card -->
+        <div 
+          @click="!isCreatingSubject && addNewSubject()"
+          :class="[
+            'glass-card tetris-card group relative overflow-hidden transition-all duration-500 ease-in-out cursor-pointer',
+            isCreatingSubject ? 'low-progress p-4' : 'flex items-center justify-center p-2 hover:bg-white/10'
+          ]"
+        >
+          <!-- Water effect (only when expanded) -->
+          <div v-if="isCreatingSubject" class="water-container">
+            <div class="water-level" style="height: 0%">
+              <div class="water-fill" style="background: linear-gradient(135deg, #4F46E520, #4F46E540)"></div>
+            </div>
+            <div class="wave-svg">
+              <svg class="sine-wave" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,12.5 Q25,0 50,12.5 T100,12.5" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Content -->
+          <div class="relative z-20">
+            <!-- Collapsed state: Plus button -->
+            <div v-if="!isCreatingSubject" class="flex items-center justify-center">
+              <svg class="w-8 h-8 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="transform: translateY(5px);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </div>
+            
+            <!-- Expanded state: Form -->
+            <div v-else class="space-y-4">
+              <!-- Current Field -->
+              <div class="flex items-center gap-3">
+                <!-- Back button -->
+                <button 
+                  v-if="currentStep > 0"
+                  @click.stop="previousStep"
+                  class="w-8 h-8 rounded-full glass-effect text-white hover:bg-white/10 transition-colors flex items-center justify-center"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                <!-- Input field -->
+                <div class="flex-1">
+                  <input 
+                    ref="currentInput"
+                    v-model="currentFieldValue"
+                    type="text"
+                    :placeholder="getCurrentPlaceholder()"
+                    @keydown.enter="nextStep"
+                    class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+                  />
+                </div>
+                
+                <!-- Next/Save button -->
+                <button 
+                  @click.stop="nextStep"
+                  :disabled="!currentFieldValue.trim()"
+                  class="w-8 h-8 rounded-full glass-effect text-white hover:bg-white/10 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg v-if="currentStep < 1" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- Progress dots -->
+              <div class="flex justify-center gap-2">
+                <div 
+                  v-for="step in 2" 
+                  :key="step"
+                  :class="[
+                    'w-2 h-2 rounded-full transition-colors',
+                    step <= currentStep + 1 ? 'bg-white/60' : 'bg-white/20'
+                  ]"
+                ></div>
               </div>
             </div>
           </div>
@@ -311,6 +419,16 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 // Mobile menu state
 const isMobileMenuOpen = ref(false)
 
+// Add subject state
+const isCreatingSubject = ref(false)
+const currentStep = ref(0) // 0: название, 1: преподаватель
+const currentFieldValue = ref('')
+const newSubject = ref({
+  name: '',
+  professor: ''
+})
+const currentInput = ref<HTMLInputElement | null>(null)
+
 // Expanded cards state
 const expandedCards = ref<Set<string>>(new Set())
 
@@ -319,12 +437,23 @@ const isNarrowScreen = ref(false)
 
 // Update screen size on mount and resize
 const updateScreenSize = () => {
+  const wasNarrowScreen = isNarrowScreen.value
   isNarrowScreen.value = window.innerWidth <= 768
+  
+  // If switching to narrow screen, collapse all cards
+  if (!wasNarrowScreen && isNarrowScreen.value) {
+    expandedCards.value.clear()
+  }
 }
 
 onMounted(() => {
   updateScreenSize()
   window.addEventListener('resize', updateScreenSize)
+  
+  // Collapse all cards on narrow screens
+  if (isNarrowScreen.value) {
+    expandedCards.value.clear()
+  }
 })
 
 onUnmounted(() => {
@@ -366,6 +495,144 @@ const navigateToSubject = (subjectId: string) => {
   // For now, we'll use window.location for navigation
   // Later this can be replaced with Vue Router
   window.location.href = `/subjects/${subjectId}`
+}
+
+// Background click handler
+const handleBackgroundClick = (event: Event) => {
+  // If we're creating a subject and clicked outside the form, cancel
+  if (isCreatingSubject.value) {
+    const target = event.target as HTMLElement
+    if (!target.closest('.tetris-card')) {
+      cancelCreateSubject()
+    }
+  }
+}
+
+// Get current placeholder text
+const getCurrentPlaceholder = () => {
+  const placeholders = [
+    'Название предмета',
+    'Преподаватель'
+  ]
+  return placeholders[currentStep.value] || ''
+}
+
+// Next step function
+const nextStep = () => {
+  if (!currentFieldValue.value.trim()) return
+  
+  // Save current value
+  if (currentStep.value === 0) {
+    newSubject.value.name = currentFieldValue.value.trim()
+  } else if (currentStep.value === 1) {
+    newSubject.value.professor = currentFieldValue.value.trim()
+  }
+  
+  // Move to next step or save
+  if (currentStep.value < 1) {
+    currentStep.value++
+    currentFieldValue.value = ''
+    // Focus on input after DOM update
+    setTimeout(() => {
+      if (currentInput.value) {
+        currentInput.value.focus()
+      }
+    }, 100)
+  } else {
+    // Save the subject
+    saveNewSubject()
+  }
+}
+
+// Previous step function
+const previousStep = () => {
+  if (currentStep.value > 0) {
+    currentStep.value--
+    // Restore previous value
+    if (currentStep.value === 0) {
+      currentFieldValue.value = newSubject.value.name
+    }
+    // Focus on input after DOM update
+    setTimeout(() => {
+      if (currentInput.value) {
+        currentInput.value.focus()
+      }
+    }, 100)
+  }
+}
+
+// Add new subject function
+const addNewSubject = () => {
+  console.log('Add new subject clicked')
+  isCreatingSubject.value = true
+  currentStep.value = 0
+  currentFieldValue.value = ''
+  // Reset form
+  newSubject.value = {
+    name: '',
+    professor: ''
+  }
+  // Focus on input after DOM update
+  setTimeout(() => {
+    if (currentInput.value) {
+      currentInput.value.focus()
+    }
+  }, 600) // Увеличил время для завершения анимации
+}
+
+// Cancel creating subject
+const cancelCreateSubject = () => {
+  isCreatingSubject.value = false
+  currentStep.value = 0
+  currentFieldValue.value = ''
+  newSubject.value = {
+    name: '',
+    professor: ''
+  }
+}
+
+// Add tasks to subject function
+const addTasksToSubject = (subjectId: string) => {
+  console.log('Add tasks to subject:', subjectId)
+  // For now, just show an alert
+  // Later this can open a modal or navigate to a tasks page
+  alert('Функция добавления задач будет реализована позже')
+}
+
+// Save new subject
+const saveNewSubject = () => {
+  if (!newSubject.value.name || !newSubject.value.professor) {
+    alert('Пожалуйста, заполните обязательные поля')
+    return
+  }
+
+  const subject: Subject = {
+    id: Date.now().toString(),
+    name: newSubject.value.name,
+    description: '',
+    color: '#8b949e',
+    professor: newSubject.value.professor,
+    credits: 3, // Default value
+    currentProgress: 0,
+    totalLabs: 0,
+    completedLabs: 0,
+    totalAttestations: 0,
+    completedAttestations: 0,
+    totalCourseworks: 0,
+    completedCourseworks: 0,
+    hasNotification: false,
+    hasLabNotification: false,
+    hasAttestationNotification: false,
+    hasCourseworkNotification: false,
+    status: 'active'
+  }
+
+  subjects.value.push(subject)
+  isCreatingSubject.value = false
+  currentStep.value = 0
+  currentFieldValue.value = ''
+  
+  console.log('Subject created:', subject)
 }
 
 // Handle card click based on card state
