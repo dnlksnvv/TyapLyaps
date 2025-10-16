@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a1a; color: white; font-family: Arial, sans-serif; }
+        .icon-container { display: inline-block; margin: 10px; text-align: center; }
+        canvas { border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>PWA Icons Generator</h1>
+    <p>Right-click on each icon and "Save image as..." to download</p>
+    
+    <div class="icon-container">
+        <canvas id="icon192" width="192" height="192"></canvas>
+        <div>192x192</div>
+    </div>
+    
+    <div class="icon-container">
+        <canvas id="icon512" width="512" height="512"></canvas>
+        <div>512x512</div>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const scale = size / 512;
+            
+            // Background
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Main circle
+            ctx.fillStyle = '#2a2a2a';
+            ctx.strokeStyle = '#4a4a4a';
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, 180 * scale, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Task/Collection icon
+            ctx.fillStyle = '#3a3a3a';
+            ctx.strokeStyle = '#5a5a5a';
+            ctx.lineWidth = 2 * scale;
+            ctx.fillRect(180 * scale, 180 * scale, 152 * scale, 152 * scale);
+            ctx.strokeRect(180 * scale, 180 * scale, 152 * scale, 152 * scale);
+            
+            // Plus sign
+            ctx.strokeStyle = '#8b949e';
+            ctx.lineWidth = 8 * scale;
+            ctx.lineCap = 'round';
+            
+            // Vertical line
+            ctx.beginPath();
+            ctx.moveTo(size/2, 220 * scale);
+            ctx.lineTo(size/2, 292 * scale);
+            ctx.stroke();
+            
+            // Horizontal line
+            ctx.beginPath();
+            ctx.moveTo(220 * scale, size/2);
+            ctx.lineTo(292 * scale, size/2);
+            ctx.stroke();
+            
+            // Small dots
+            ctx.fillStyle = '#8b949e';
+            const dots = [
+                [200 * scale, 200 * scale],
+                [312 * scale, 200 * scale],
+                [200 * scale, 312 * scale],
+                [312 * scale, 312 * scale]
+            ];
+            
+            dots.forEach(([x, y]) => {
+                ctx.beginPath();
+                ctx.arc(x, y, 4 * scale, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        }
+        
+        // Draw icons
+        drawIcon(document.getElementById('icon192'), 192);
+        drawIcon(document.getElementById('icon512'), 512);
+    </script>
+</body>
+</html>
