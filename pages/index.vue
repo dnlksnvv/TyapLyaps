@@ -164,9 +164,11 @@
                        <div
                          v-for="subject in subjects"
                          :key="subject.id"
+                         @click="handleCardClick(subject.id, $event)"
                          :class="[
-                           'glass-card tetris-card group relative overflow-hidden p-4',
-                           getProgressClass(subject.currentProgress)
+                           'glass-card tetris-card group relative overflow-hidden p-4 cursor-pointer',
+                           getProgressClass(subject.currentProgress),
+                           { 'expanded': isCardExpanded(subject.id) }
                          ]"
                        >
             <!-- Water effect -->
@@ -200,8 +202,45 @@
             
             <!-- Header -->
             <div class="relative z-20">
+              <!-- Notification icon in top right corner -->
+              <div class="absolute top-0 right-0 z-30 notification-icon">
+                <svg 
+                  class="w-4 h-4 transition-colors duration-200"
+                  :class="subject.hasNotification ? 'text-white' : 'text-gray-500'"
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                
+                <!-- Red dot for notifications -->
+                <div 
+                  v-if="subject.hasNotification"
+                  class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full notification-dot"
+                ></div>
+              </div>
+              
+              <!-- Expand/Collapse button in bottom right corner (narrow screens only) -->
+              <button 
+                v-if="isNarrowScreen"
+                @click.stop="toggleCardExpansion(subject.id)"
+                class="absolute bottom-0 right-0 z-30 notification-icon"
+                :title="isCardExpanded(subject.id) ? 'Свернуть' : 'Развернуть'"
+              >
+                <svg 
+                  class="w-4 h-4 transition-all duration-200 text-gray-500"
+                  :class="{ 'rotate-180': isCardExpanded(subject.id) }"
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
               <!-- Title with reserved space for 2 lines -->
-              <div class="mb-3">
+              <div class="mb-2 pr-8 h-12 flex items-start">
                 <h3 
                   :class="[
                     'adaptive-title text-xl font-semibold text-white drop-shadow-lg',
@@ -220,44 +259,42 @@
                 {{ subject.professor }}
               </div>
               
-              <!-- Progress percentage and notification icon -->
-              <div class="flex items-center justify-between mb-3">
-                <!-- Progress percentage -->
-                <div class="text-left">
-                  <span class="text-lg font-bold text-white drop-shadow-lg">{{ subject.currentProgress }}%</span>
-                </div>
-                
-                <!-- Notification icon -->
-                <div class="relative notification-icon">
-                  <svg 
-                    class="w-5 h-5 transition-colors duration-200"
-                    :class="subject.hasNotification ? 'text-white' : 'text-gray-500'"
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                  
-                  <!-- Red dot for notifications -->
-                  <div 
-                    v-if="subject.hasNotification"
-                    class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full notification-dot"
-                  ></div>
-                </div>
-              </div>
-              
               <!-- Progress tags -->
-              <div class="progress-tags">
-                <span class="progress-tag bg-blue-500/20 text-blue-300 border-blue-500/30">
-                  {{ subject.completedLabs }}/{{ subject.totalLabs }} лаб
-                </span>
-                <span class="progress-tag bg-green-500/20 text-green-300 border-green-500/30">
-                  {{ subject.completedAttestations || 0 }}/{{ subject.totalAttestations || 0 }} атт
-                </span>
-                <span class="progress-tag bg-purple-500/20 text-purple-300 border-purple-500/30">
-                  {{ subject.completedCourseworks || 0 }}/{{ subject.totalCourseworks || 0 }} курсач
-                </span>
+              <div class="progress-tags-bottom">
+                <div class="flex flex-wrap gap-1">
+                  <!-- Labs tag with dot -->
+                  <span 
+                    class="progress-tag bg-blue-500/20 text-blue-300 border-blue-500/30 inline-flex items-center gap-1"
+                  >
+                    {{ subject.completedLabs }}/{{ subject.totalLabs }} лаб
+                    <div 
+                      class="w-1.5 h-1.5 rounded-full notification-dot"
+                      :class="subject.hasLabNotification ? 'bg-red-500' : 'bg-gray-500'"
+                    ></div>
+                  </span>
+                  
+                  <!-- Attestations tag with dot -->
+                  <span 
+                    class="progress-tag bg-green-500/20 text-green-300 border-green-500/30 inline-flex items-center gap-1"
+                  >
+                    {{ subject.completedAttestations || 0 }}/{{ subject.totalAttestations || 0 }} атт
+                    <div 
+                      class="w-1.5 h-1.5 rounded-full notification-dot"
+                      :class="subject.hasAttestationNotification ? 'bg-red-500' : 'bg-gray-500'"
+                    ></div>
+                  </span>
+                  
+                  <!-- Courseworks tag with dot -->
+                  <span 
+                    class="progress-tag bg-purple-500/20 text-purple-300 border-purple-500/30 inline-flex items-center gap-1"
+                  >
+                    {{ subject.completedCourseworks || 0 }}/{{ subject.totalCourseworks || 0 }} курсач
+                    <div 
+                      class="w-1.5 h-1.5 rounded-full notification-dot"
+                      :class="subject.hasCourseworkNotification ? 'bg-red-500' : 'bg-gray-500'"
+                    ></div>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -269,10 +306,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false)
+
+// Expanded cards state
+const expandedCards = ref<Set<string>>(new Set())
+
+// Screen size state
+const isNarrowScreen = ref(false)
+
+// Update screen size on mount and resize
+const updateScreenSize = () => {
+  isNarrowScreen.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  updateScreenSize()
+  window.addEventListener('resize', updateScreenSize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateScreenSize)
+})
 
 // Mobile menu functions
 const toggleMobileMenu = () => {
@@ -282,6 +339,55 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
 }
+
+// Card expansion functions
+const toggleCardExpansion = (cardId: string) => {
+  console.log('Toggle expansion for card:', cardId, 'currently expanded:', expandedCards.value.has(cardId))
+  
+  if (expandedCards.value.has(cardId)) {
+    // If clicking on already expanded card, collapse it
+    expandedCards.value.delete(cardId)
+    console.log('Card collapsed')
+  } else {
+    // If clicking on collapsed card, collapse all others and expand this one
+    expandedCards.value.clear()
+    expandedCards.value.add(cardId)
+    console.log('Card expanded')
+  }
+}
+
+const isCardExpanded = (cardId: string) => {
+  return expandedCards.value.has(cardId)
+}
+
+// Navigation functions
+const navigateToSubject = (subjectId: string) => {
+  console.log('Navigate to subject:', subjectId)
+  // For now, we'll use window.location for navigation
+  // Later this can be replaced with Vue Router
+  window.location.href = `/subjects/${subjectId}`
+}
+
+// Handle card click based on card state
+const handleCardClick = (subjectId: string, event: Event) => {
+  console.log('Card clicked:', subjectId, 'isNarrowScreen:', isNarrowScreen.value, 'isExpanded:', isCardExpanded(subjectId))
+  
+  if (isNarrowScreen.value) {
+    // On narrow screens: toggle expansion if collapsed, navigate if expanded
+    if (isCardExpanded(subjectId)) {
+      console.log('Navigating to subject page (expanded card)')
+      navigateToSubject(subjectId)
+    } else {
+      console.log('Expanding card')
+      toggleCardExpansion(subjectId)
+    }
+  } else {
+    // On wide screens: always navigate
+    console.log('Navigating to subject page (wide screen)')
+    navigateToSubject(subjectId)
+  }
+}
+
 
 // Types
 interface Subject {
@@ -299,6 +405,9 @@ interface Subject {
   totalCourseworks?: number
   completedCourseworks?: number
   hasNotification: boolean
+  hasLabNotification: boolean
+  hasAttestationNotification: boolean
+  hasCourseworkNotification: boolean
   status: 'active' | 'completed' | 'paused'
 }
 
@@ -588,6 +697,9 @@ const loadMockData = () => {
       totalCourseworks: 1,
       completedCourseworks: 0,
       hasNotification: true,
+      hasLabNotification: true,
+      hasAttestationNotification: false,
+      hasCourseworkNotification: true,
       status: 'active'
     },
     {
@@ -605,6 +717,9 @@ const loadMockData = () => {
       totalCourseworks: 1,
       completedCourseworks: 0,
       hasNotification: false,
+      hasLabNotification: false,
+      hasAttestationNotification: true,
+      hasCourseworkNotification: false,
       status: 'active'
     },
     {
@@ -622,6 +737,9 @@ const loadMockData = () => {
       totalCourseworks: 0,
       completedCourseworks: 0,
       hasNotification: true,
+      hasLabNotification: false,
+      hasAttestationNotification: false,
+      hasCourseworkNotification: false,
       status: 'active'
     },
     {
@@ -639,6 +757,9 @@ const loadMockData = () => {
       totalCourseworks: 0,
       completedCourseworks: 0,
       hasNotification: false,
+      hasLabNotification: false,
+      hasAttestationNotification: false,
+      hasCourseworkNotification: false,
       status: 'completed'
     },
     {
@@ -656,6 +777,9 @@ const loadMockData = () => {
       totalCourseworks: 1,
       completedCourseworks: 0,
       hasNotification: true,
+      hasLabNotification: true,
+      hasAttestationNotification: true,
+      hasCourseworkNotification: false,
       status: 'active'
     },
     {
@@ -673,6 +797,9 @@ const loadMockData = () => {
       totalCourseworks: 1,
       completedCourseworks: 1,
       hasNotification: false,
+      hasLabNotification: false,
+      hasAttestationNotification: false,
+      hasCourseworkNotification: false,
       status: 'active'
     }
   ]
