@@ -199,55 +199,65 @@
             />
             
             <!-- Header -->
-            <div class="relative flex items-start justify-between z-20">
-              <div class="flex-1">
-                <h3 class="text-xl font-semibold mb-2 text-white drop-shadow-lg">
+            <div class="relative z-20">
+              <!-- Title with reserved space for 2 lines -->
+              <div class="mb-3">
+                <h3 
+                  :class="[
+                    'adaptive-title text-xl font-semibold text-white drop-shadow-lg',
+                    getTitleClass(subject.name)
+                  ]"
+                >
                   {{ subject.name }}
                 </h3>
+              </div>
+              
+              <!-- Professor moved below title -->
+              <div class="flex items-center text-sm mb-4 text-gray-300 drop-shadow-md">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                {{ subject.professor }}
+              </div>
+              
+              <!-- Progress percentage and notification icon -->
+              <div class="flex items-center justify-between mb-3">
+                <!-- Progress percentage -->
+                <div class="text-left">
+                  <span class="text-lg font-bold text-white drop-shadow-lg">{{ subject.currentProgress }}%</span>
+                </div>
                 
-                <!-- Professor -->
-                <div class="flex items-center text-sm mb-3 text-gray-300 drop-shadow-md">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <!-- Notification icon -->
+                <div class="relative notification-icon">
+                  <svg 
+                    class="w-5 h-5 transition-colors duration-200"
+                    :class="subject.hasNotification ? 'text-white' : 'text-gray-500'"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                   </svg>
-                  {{ subject.professor }}
+                  
+                  <!-- Red dot for notifications -->
+                  <div 
+                    v-if="subject.hasNotification"
+                    class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full notification-dot"
+                  ></div>
                 </div>
               </div>
               
-              <!-- Status indicator -->
-              <div class="flex items-center space-x-2">
-                <div 
-                  class="w-3 h-3 rounded-full drop-shadow-md"
-                  :style="{ backgroundColor: subject.color }"
-                />
-                <span class="text-xs font-medium text-gray-300 drop-shadow-md">
-                  {{ getDifficultyText(subject.difficulty) }}
+              <!-- Progress tags -->
+              <div class="progress-tags">
+                <span class="progress-tag bg-blue-500/20 text-blue-300 border-blue-500/30">
+                  {{ subject.completedLabs }}/{{ subject.totalLabs }} лаб
                 </span>
-              </div>
-            </div>
-            
-            <!-- Progress section -->
-            <div class="relative mt-4 z-20">
-              <!-- Progress bar -->
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-300 drop-shadow-md">Прогресс</span>
-                <span class="text-sm font-bold text-white drop-shadow-lg">{{ subject.currentProgress }}%</span>
-              </div>
-              
-              <div class="relative h-2 bg-gray-700/50 rounded-full overflow-hidden backdrop-blur-sm">
-                <div 
-                  class="h-full transition-all duration-500 ease-out"
-                  :style="{ 
-                    width: `${subject.currentProgress}%`,
-                    backgroundColor: subject.color 
-                  }"
-                />
-              </div>
-              
-              <!-- Stats -->
-              <div class="flex items-center justify-between mt-3 text-sm text-gray-300 drop-shadow-md">
-                <span>{{ subject.completedLabs }} / {{ subject.totalLabs }} лаб</span>
-                <span>{{ subject.workload }}ч/нед</span>
+                <span class="progress-tag bg-green-500/20 text-green-300 border-green-500/30">
+                  {{ subject.completedAttestations || 0 }}/{{ subject.totalAttestations || 0 }} атт
+                </span>
+                <span class="progress-tag bg-purple-500/20 text-purple-300 border-purple-500/30">
+                  {{ subject.completedCourseworks || 0 }}/{{ subject.totalCourseworks || 0 }} курсач
+                </span>
               </div>
             </div>
           </div>
@@ -279,13 +289,16 @@ interface Subject {
   name: string
   description?: string
   color: string
-  difficulty: 'easy' | 'medium' | 'hard'
-  workload: number
   professor?: string
   credits: number
   currentProgress: number
   totalLabs: number
   completedLabs: number
+  totalAttestations?: number
+  completedAttestations?: number
+  totalCourseworks?: number
+  completedCourseworks?: number
+  hasNotification: boolean
   status: 'active' | 'completed' | 'paused'
 }
 
@@ -544,6 +557,20 @@ const getWaveColor = (progress: number) => {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`
 }
 
+const getTitleClass = (title: string) => {
+  const length = title.length
+  
+  if (length > 120) {
+    return 'extremely-long-title'
+  } else if (length > 80) {
+    return 'very-long-title'
+  } else if (length > 50) {
+    return 'long-title'
+  }
+  
+  return ''
+}
+
 const loadMockData = () => {
   subjects.value = [
     {
@@ -551,13 +578,16 @@ const loadMockData = () => {
       name: 'Программирование',
       description: 'Основы программирования на Python',
       color: '#f0f6fc',
-      difficulty: 'medium',
-      workload: 8,
       professor: 'Иванов И.И.',
       credits: 4,
       currentProgress: 0,
       totalLabs: 9,
       completedLabs: 1,
+      totalAttestations: 2,
+      completedAttestations: 0,
+      totalCourseworks: 1,
+      completedCourseworks: 0,
+      hasNotification: true,
       status: 'active'
     },
     {
@@ -565,13 +595,16 @@ const loadMockData = () => {
       name: 'Методы и средства проектировани информационных систем и технологий',
       description: 'Высшая математика и математический анализ',
       color: '#8b949e',
-      difficulty: 'hard',
-      workload: 10,
       professor: 'Петров П.П.',
       credits: 5,
       currentProgress: 25,
       totalLabs: 15,
       completedLabs: 7,
+      totalAttestations: 3,
+      completedAttestations: 1,
+      totalCourseworks: 1,
+      completedCourseworks: 0,
+      hasNotification: false,
       status: 'active'
     },
     {
@@ -579,13 +612,16 @@ const loadMockData = () => {
       name: 'Физика',
       description: 'Общая физика и механика',
       color: '#6e7681',
-      difficulty: 'medium',
-      workload: 6,
       professor: 'Сидоров С.С.',
       credits: 3,
-      currentProgress:50,
+      currentProgress: 50,
       totalLabs: 6,
       completedLabs: 5,
+      totalAttestations: 2,
+      completedAttestations: 1,
+      totalCourseworks: 0,
+      completedCourseworks: 0,
+      hasNotification: true,
       status: 'active'
     },
     {
@@ -593,13 +629,16 @@ const loadMockData = () => {
       name: 'Английский язык',
       description: 'Технический английский для IT',
       color: '#58a6ff',
-      difficulty: 'easy',
-      workload: 4,
       professor: 'Смирнова А.А.',
       credits: 2,
       currentProgress: 100,
       totalLabs: 4,
       completedLabs: 4,
+      totalAttestations: 1,
+      completedAttestations: 1,
+      totalCourseworks: 0,
+      completedCourseworks: 0,
+      hasNotification: false,
       status: 'completed'
     },
     {
@@ -607,13 +646,16 @@ const loadMockData = () => {
       name: 'Базы данных',
       description: 'SQL и проектирование БД',
       color: '#f85149',
-      difficulty: 'hard',
-      workload: 12,
       professor: 'Козлов К.К.',
       credits: 6,
       currentProgress: 30,
       totalLabs: 12,
       completedLabs: 3,
+      totalAttestations: 2,
+      completedAttestations: 0,
+      totalCourseworks: 1,
+      completedCourseworks: 0,
+      hasNotification: true,
       status: 'active'
     },
     {
@@ -621,13 +663,16 @@ const loadMockData = () => {
       name: 'Веб-разработка',
       description: 'HTML, CSS, JavaScript',
       color: '#a5a5a5',
-      difficulty: 'medium',
-      workload: 6,
       professor: 'Новиков Н.Н.',
       credits: 3,
       currentProgress: 75,
       totalLabs: 8,
       completedLabs: 7,
+      totalAttestations: 2,
+      completedAttestations: 1,
+      totalCourseworks: 1,
+      completedCourseworks: 1,
+      hasNotification: false,
       status: 'active'
     }
   ]
