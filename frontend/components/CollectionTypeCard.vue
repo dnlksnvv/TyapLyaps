@@ -16,64 +16,40 @@
       :style="{ background: `linear-gradient(135deg, ${collection.color}20, ${collection.color}40)` }"
     />
     
-    <!-- Main content container with padding from card edges -->
-    <div class="relative z-20 h-full flex flex-col p-4">
-      <!-- Notification icon in top right corner -->
-      <div class="absolute top-2 right-2 z-30 notification-icon" @click.stop>
-        <svg 
-          class="w-4 h-4 transition-colors duration-200"
-          :class="collection.hasNotification ? 'text-white' : 'text-gray-500'"
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-        
-        <!-- Red dot for notifications -->
+    <!-- Content container with padding -->
+    <div class="relative z-20 h-full flex flex-col items-center justify-center p-3">
+      <!-- Icon container -->
+      <div class="mb-2 flex-shrink-0">
         <div 
-          v-if="collection.hasNotification"
-          class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full notification-dot"
-        ></div>
+          class="w-14 h-14 rounded-full flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+          :style="{ backgroundColor: `${collection.color}20` }"
+        >
+          <svg 
+            class="w-7 h-7 text-white drop-shadow-lg"
+            fill="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
       </div>
       
-      <!-- Content container (icon + text) with proper spacing -->
-      <div class="flex-1 flex flex-col items-center justify-center">
-        <!-- Icon container -->
-        <div class="flex justify-center items-center h-16 mb-3">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center"
-               :style="{ backgroundColor: collection.color + '20' }">
-            <svg 
-              class="w-6 h-6 transition-colors duration-200"
-              :style="{ color: collection.color }"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-          </div>
-        </div>
-        
-        <!-- Text container with width constraint -->
-        <div class="w-full text-center" style="max-width: 100%; overflow: hidden; box-sizing: border-box;">
-          <h3 
-            :class="[
-              'adaptive-title text-sm font-semibold text-white drop-shadow-lg',
-              getTitleClass(collection.name)
-            ]"
-            style="max-width: 100% !important; width: 100% !important; box-sizing: border-box !important; word-wrap: break-word !important; overflow-wrap: break-word !important; white-space: normal !important; word-break: break-word !important; overflow: hidden !important;"
-          >
-            {{ collection.name }}
-          </h3>
-        </div>
+      <!-- Title container -->
+      <div class="w-full text-center px-2">
+        <h3 
+          :class="getTitleClasses()"
+          :title="`Length: ${collection.name.length}`"
+        >
+          {{ processTitle(collection.name) }}
+        </h3>
       </div>
     </div>
+    
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, ref, onMounted, nextTick, watch } from 'vue'
 import WaveEffect from './WaveEffect.vue'
 
 // Types
@@ -122,6 +98,9 @@ const emit = defineEmits<{
 
 // Reactive data
 const isCardExpanded = computed(() => props.isExpanded)
+const titleRef = ref<HTMLElement | null>(null)
+const fontSize = ref('1.125rem') // Базовый размер шрифта (18px)
+const isTextTruncated = ref(false)
 
 // Methods
 const getProgressClass = (progress: number) => {
@@ -131,25 +110,82 @@ const getProgressClass = (progress: number) => {
   return 'low-progress'
 }
 
-const getTitleClass = (title: string) => {
-  const length = title.length
-  
-  if (length > 150) {
-    return 'extremely-long-title'
-  } else if (length > 100) {
-    return 'very-long-title'
-  } else if (length > 60) {
-    return 'long-title'
+
+// Функция для обработки очень длинных слов без пробелов
+const processTitle = (title: string) => {
+  // Если слово длиннее 20 символов и не содержит пробелов, вставляем пробелы каждые 15 символов
+  if (title.length > 20 && !title.includes(' ')) {
+    return title.replace(/(.{15})/g, '$1 ').trim()
   }
+  return title
+}
+
+// Функция для проверки, помещается ли текст в 2 строки
+const checkTextFit = async () => {
+  if (!titleRef.value) return
   
-  return ''
+  await nextTick()
+  
+  const element = titleRef.value
+  const computedStyle = window.getComputedStyle(element)
+  const lineHeight = parseFloat(computedStyle.lineHeight)
+  const maxHeight = lineHeight * 2.1 // Небольшой запас для точности
+  
+  // Сначала сбрасываем обрезание для точной проверки
+  isTextTruncated.value = false
+  fontSize.value = '1.125rem' // Сбрасываем к базовому размеру (18px)
+  
+  await nextTick()
+  
+  // Проверяем, превышает ли высота элемента максимальную высоту для 2 строк
+  const isOverflowing = element.scrollHeight > maxHeight
+  
+  if (isOverflowing) {
+    // Пробуем уменьшить размер шрифта поэтапно
+    let currentFontSize = 1.125 // Начинаем с базового размера (18px)
+    const minFontSize = 0.7 // Минимальный размер (11.2px)
+    
+    while (currentFontSize > minFontSize && isOverflowing) {
+      currentFontSize -= 0.05 // Уменьшаем на 0.05rem за раз
+      fontSize.value = `${currentFontSize}rem`
+      
+      await nextTick()
+      
+      const stillOverflowing = element.scrollHeight > maxHeight
+      if (!stillOverflowing) {
+        break
+      }
+    }
+    
+    // Если даже с минимальным размером не помещается, включаем обрезание
+    if (element.scrollHeight > maxHeight) {
+      isTextTruncated.value = true
+    }
+  }
+}
+
+// Функция для получения CSS классов
+const getTitleClasses = () => {
+  return 'adaptive-title-collection text-white font-semibold drop-shadow-lg leading-tight'
 }
 
 const handleCardClick = (event: Event) => {
   emit('cardClick', props.collection.id, event)
 }
+
+// Watchers
+watch(() => props.collection.name, async () => {
+  await nextTick()
+  checkTextFit()
+}, { immediate: false })
+
+// Lifecycle
+onMounted(async () => {
+  await nextTick()
+  checkTextFit()
+})
 </script>
 
 <style scoped>
-/* Component specific styles */
+/* Простая карточка без лишних элементов */
 </style>

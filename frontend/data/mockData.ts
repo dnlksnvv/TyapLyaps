@@ -417,7 +417,7 @@ export const mockCollections: Collection[] = [
     tags: [
       {
         id: '1',
-        text: 'Программирование',
+        text: 'ПрограммированиеПрограммированиеПрограммирование',
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
