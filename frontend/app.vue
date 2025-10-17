@@ -10,7 +10,7 @@ useHead({
   title: 'TyapLyaps - Task Manager',
   meta: [
     { name: 'description', content: 'Универсальный менеджер задач и коллекций' },
-    { name: 'theme-color', content: '#1a1a1a' },
+    { name: 'theme-color', content: '#000000' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
     { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
     { name: 'apple-mobile-web-app-title', content: 'TyapLyaps' },
@@ -40,6 +40,38 @@ useHead({
 
 // 🚀 МОБИЛЬНЫЕ ОПТИМИЗАЦИИ И GPU УСКОРЕНИЕ
 onMounted(() => {
+  // Блокируем overscroll на хедерах и нижнем меню
+  const preventOverscroll = (e) => {
+    const target = e.target
+    const isHeader = target.closest('.glass-header, .mobile-header, .header-container')
+    const isBottomNav = target.closest('.mobile-bottom-nav')
+    const isScrollableContent = target.closest('.scrollable-content')
+    const isNavItem = target.closest('.nav-item')
+    
+    // Разрешаем клики по навигационным элементам
+    if (isNavItem) {
+      return true
+    }
+    
+    // Блокируем overscroll на хедерах и нижнем меню
+    if (isHeader || isBottomNav) {
+      e.preventDefault()
+      e.stopPropagation()
+      return false
+    }
+    
+    // Разрешаем прокрутку только внутри scrollable-content
+    if (!isScrollableContent && e.type === 'touchmove') {
+      e.preventDefault()
+      e.stopPropagation()
+      return false
+    }
+  }
+
+  // Блокируем overscroll на хедерах, нижнем меню и вне scrollable-content
+  document.addEventListener('touchstart', preventOverscroll, { passive: false })
+  document.addEventListener('touchmove', preventOverscroll, { passive: false })
+  document.addEventListener('touchend', preventOverscroll, { passive: false })
   // Принудительное GPU ускорение для всех элементов
   const allElements = document.querySelectorAll('*')
   allElements.forEach(element => {

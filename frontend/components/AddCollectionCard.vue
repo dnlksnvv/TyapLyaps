@@ -3,7 +3,7 @@
     @click="handleCardClick"
     :class="[
       'glass-card tetris-card add-card group relative overflow-hidden transition-all duration-500 ease-in-out cursor-pointer touch-manipulation',
-      isCreating ? 'p-3' : 'flex items-center justify-center p-2 hover:bg-white/10'
+      isCreating ? 'p-3 expanded' : 'flex items-center justify-center p-2 hover:bg-white/10'
     ]"
     :style="isCreating ? 'height: auto !important; min-height: 70px !important;' : 'height: 60px !important; min-height: 60px !important;'"
   >
@@ -14,7 +14,7 @@
     <div class="relative z-20">
       <!-- Collapsed state: Plus button -->
       <div v-if="!isCreating" class="flex items-center justify-center" @click.stop>
-        <svg class="w-8 h-8 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="transform: translateY(5px);">
+        <svg class="w-8 h-8" fill="none" stroke="#000000" viewBox="0 0 24 24" stroke-width="1.5" style="transform: translateY(5px);">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
       </div>

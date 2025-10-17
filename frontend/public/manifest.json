@@ -3,7 +3,7 @@
   "short_name": "TyapLyaps",
   "description": "Универсальный менеджер задач и коллекций",
   "theme_color": "#1a1a1a",
-  "background_color": "#0a0a0a",
+  "background_color": "transparent",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",

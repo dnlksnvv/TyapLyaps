@@ -54,6 +54,22 @@
         @update-field-value="(value) => currentFieldValue = value"
       />
     </div>
+
+    <!-- Collection Types Grid (Square Cards) -->
+    <div class="px-4 sm:px-6 lg:px-8 mt-8">
+      <h2 class="text-2xl font-bold text-white mb-6 parallax-element">Типы коллекций</h2>
+      <div class="square-grid parallax-element" :style="squareGridStyle">
+        <CollectionTypeCard
+          v-for="collectionType in collectionTypes"
+          :key="collectionType.id"
+          :collection="collectionType"
+          :is-expanded="isCardExpanded(collectionType.id)"
+          :is-narrow-screen="isNarrowScreen"
+          @card-click="handleCollectionTypeClick"
+          @toggle-expansion="toggleCardExpansion"
+        />
+      </div>
+    </div>
     
     <!-- Bottom spacing -->
     <div class="h-8"></div>
@@ -66,14 +82,61 @@ definePageMeta({
   layout: 'default'
 })
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import StatsCard from '~/components/StatsCard.vue'
 import CollectionCard from '~/components/CollectionCard.vue'
+import CollectionTypeCard from '~/components/CollectionTypeCard.vue'
 import AddCollectionCard from '~/components/AddCollectionCard.vue'
 import { mockCollections, type Collection } from '~/data/mockData'
 
 // Data
 const collections = ref<Collection[]>([])
+
+// Square collection types data
+const collectionTypes = ref([
+  {
+    id: 'type-1',
+    name: 'Программирование',
+    color: '#3B82F6',
+    progress: 75,
+    hasNotification: true
+  },
+  {
+    id: 'type-2', 
+    name: 'Математика',
+    color: '#10B981',
+    progress: 60,
+    hasNotification: false
+  },
+  {
+    id: 'type-3',
+    name: 'Физика',
+    color: '#8B5CF6',
+    progress: 45,
+    hasNotification: true
+  },
+  {
+    id: 'type-4',
+    name: 'Химия',
+    color: '#F59E0B',
+    progress: 30,
+    hasNotification: false
+  },
+  {
+    id: 'type-5',
+    name: 'История',
+    color: '#EF4444',
+    progress: 90,
+    hasNotification: false
+  },
+  {
+    id: 'type-6',
+    name: 'Литература',
+    color: '#06B6D4',
+    progress: 15,
+    hasNotification: true
+  }
+])
 
 // Collection creation state
 const isCreatingCollection = ref(false)
@@ -90,6 +153,10 @@ const expandedCards = ref<Set<string>>(new Set())
 
 // Screen size state
 const isNarrowScreen = ref(false)
+
+// Grid calculation for square cards
+const squareGridStyle = ref('')
+
 
 // Computed properties
 const completedCollections = computed(() => {
@@ -144,6 +211,13 @@ const handleCardClick = (collectionId: string, event: Event) => {
     console.log('Navigating to collection page')
     window.location.href = `/collections/${collectionId}`
   }
+}
+
+// Handle collection type card click
+const handleCollectionTypeClick = (collectionTypeId: string, event: Event) => {
+  console.log('Collection type clicked:', collectionTypeId)
+  // Here you can add navigation to a specific collection type page
+  // For now, just log the click
 }
 
 // Collection creation functions
@@ -228,17 +302,154 @@ const cancelCreateCollection = () => {
 // Screen size detection
 const updateScreenSize = () => {
   isNarrowScreen.value = window.innerWidth < 768
+  calculateSquareGrid()
+}
+
+// Calculate optimal grid for square cards with equal stretching
+const calculateSquareGrid = () => {
+  const container = document.querySelector('.square-grid')
+  if (!container) return
+  
+  const containerWidth = container.offsetWidth
+  const gap = 16 // 1rem gap
+  
+  // Адаптивные размеры в зависимости от экрана
+  let minCardWidth, maxCardWidth
+  if (window.innerWidth <= 480) {
+    minCardWidth = 110
+    maxCardWidth = 220
+  } else if (window.innerWidth <= 768) {
+    minCardWidth = 130
+    maxCardWidth = 260
+  } else {
+    minCardWidth = 150
+    maxCardWidth = 300
+  }
+  
+  console.log('Container width:', containerWidth, 'Min card width:', minCardWidth)
+  
+  // Calculate how many cards fit with minimum width
+  const cardsWithMinWidth = Math.floor((containerWidth + gap) / (minCardWidth + gap))
+  
+  console.log('Cards with min width:', cardsWithMinWidth)
+  
+  if (cardsWithMinWidth <= 0) {
+    squareGridStyle.value = ``
+    return
+  }
+  
+  // Calculate remaining space
+  const usedWidth = cardsWithMinWidth * minCardWidth + (cardsWithMinWidth - 1) * gap
+  const remainingSpace = containerWidth - usedWidth
+  
+  console.log('Used width:', usedWidth, 'Remaining space:', remainingSpace)
+  
+  // If we can fit one more card with minimum width + buffer, do it
+  const buffer = 1 // 1px буфер чтобы карточки не переносились при растяжении
+  if (remainingSpace >= minCardWidth + gap + buffer) {
+    const totalCards = cardsWithMinWidth + 1
+    console.log('Adding one more card, total:', totalCards)
+    squareGridStyle.value = ``
+  } else {
+    // Otherwise, stretch existing cards equally with buffer
+    const availableSpace = remainingSpace - buffer // Убираем буфер из доступного места
+    const stretchAmount = Math.min(availableSpace / cardsWithMinWidth, maxCardWidth - minCardWidth)
+    const finalCardWidth = minCardWidth + stretchAmount
+    console.log('Stretching cards to:', finalCardWidth, 'with buffer:', buffer)
+    squareGridStyle.value = `--card-width: ${finalCardWidth}px !important;`
+  }
+  
+  // После расчета сетки, проверяем текст в карточках
+  setTimeout(() => {
+    adjustTextSizes()
+  }, 100)
+}
+
+// Функция для динамической настройки размера текста
+const adjustTextSizes = () => {
+  const cards = document.querySelectorAll('.tetris-card.collection-type')
+  
+  cards.forEach((card) => {
+    const textElement = card.querySelector('.text-lg')
+    if (!textElement) return
+    
+    // ПРИНУДИТЕЛЬНО устанавливаем ВСЕ ограничения
+    textElement.style.setProperty('max-width', '100%', 'important')
+    textElement.style.setProperty('width', '100%', 'important')
+    textElement.style.setProperty('box-sizing', 'border-box', 'important')
+    textElement.style.setProperty('word-wrap', 'break-word', 'important')
+    textElement.style.setProperty('overflow-wrap', 'break-word', 'important')
+    textElement.style.setProperty('white-space', 'normal', 'important')
+    textElement.style.setProperty('word-break', 'break-word', 'important')
+    textElement.style.setProperty('overflow', 'hidden', 'important')
+    textElement.style.setProperty('display', 'block', 'important')
+    
+    // Принудительно ограничиваем контейнер
+    const textContainer = textElement.parentElement
+    if (textContainer) {
+      textContainer.style.setProperty('max-width', '100%', 'important')
+      textContainer.style.setProperty('overflow', 'hidden', 'important')
+      textContainer.style.setProperty('box-sizing', 'border-box', 'important')
+    }
+    
+    // Простая настройка - уменьшаем размер шрифта для длинных слов
+    const text = textElement.textContent || ''
+    const cardWidth = card.offsetWidth
+    
+    // Базовый размер шрифта в зависимости от ширины карточки
+    let fontSize = Math.max(8, Math.min(12, cardWidth / 15))
+    
+    // Дополнительно уменьшаем для длинных слов
+    if (text.length > 12) {
+      fontSize *= 0.8
+    }
+    if (text.length > 20) {
+      fontSize *= 0.7
+    }
+    
+    // Применяем размер
+    textElement.style.setProperty('font-size', `${fontSize}px`, 'important')
+  })
+}
+
+
+// Watch for changes in collection types to recalculate grid
+watch(collectionTypes, () => {
+  nextTick(() => {
+    setTimeout(() => {
+      calculateSquareGrid()
+    }, 100)
+  })
+}, { deep: true })
+
+// Watch for window resize to adjust text sizes
+const handleResize = () => {
+  updateScreenSize()
+  setTimeout(() => {
+    adjustTextSizes()
+  }, 200)
 }
 
 // Lifecycle
 onMounted(() => {
   collections.value = mockCollections
   updateScreenSize()
-  window.addEventListener('resize', updateScreenSize)
+  window.addEventListener('resize', handleResize)
+  
+  // Recalculate grid after DOM is fully rendered
+  nextTick(() => {
+    setTimeout(() => {
+      calculateSquareGrid()
+      // Дополнительный вызов для текста
+      setTimeout(() => {
+        adjustTextSizes()
+      }, 200)
+    }, 100)
+  })
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateScreenSize)
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 

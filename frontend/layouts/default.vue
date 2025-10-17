@@ -1,11 +1,8 @@
 <template>
-  <div 
-    class="min-h-screen"
-    @click="handleBackgroundClick"
-    style="-webkit-tap-highlight-color: transparent; touch-action: manipulation;"
-  >
-    <!-- Header -->
-    <header class="glass-header sticky top-0 z-50">
+  <!-- Header Container - полностью независимый -->
+  <div class="header-container">
+    <!-- Desktop Header -->
+    <header :class="['glass-header hidden lg:block', { 'transparent': isHeaderTransparent }]">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <!-- Logo -->
@@ -19,16 +16,6 @@
           
           <!-- User menu -->
           <div class="flex items-center space-x-4">
-            <!-- Mobile menu button -->
-            <button 
-              @click.stop="toggleMobileMenu"
-              class="lg:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors relative z-50"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            
             <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
               <span class="text-sm font-bold text-white">С</span>
             </div>
@@ -37,23 +24,52 @@
       </div>
     </header>
 
+    <!-- Mobile Header -->
+    <header :class="['mobile-header lg:hidden', { 'browser-mode': isBrowserMode, 'transparent': isHeaderTransparent }]">
+      <div class="h-full flex items-end justify-start px-4 pb-2">
+        <!-- Mobile menu icon -->
+        <svg 
+          @click.stop="toggleMobileMenu"
+          @touchstart.stop="toggleMobileMenu"
+          class="w-7 h-7 text-white cursor-pointer hover:text-white/80 transition-colors"
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24" 
+          stroke-width="2.5"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </div>
+    </header>
+  </div>
+
+    <!-- Main Content Container -->
+    <div 
+      :class="[
+        'main-content-container',
+        { 'menu-open': isMenuOpen }
+      ]"
+      @click="handleBackgroundClick"
+      style="-webkit-tap-highlight-color: transparent; touch-action: manipulation;"
+    >
+
     <!-- Sidebar Menu -->
     <SidebarMenu 
       :is-open="isMenuOpen"
+      :class="{ 'menu-open': isMenuOpen }"
       @menu-click="closeMobileMenu"
     />
     
-
-    <!-- Mobile menu overlay -->
+    <!-- Menu overlay for mobile -->
     <div 
       v-if="isMenuOpen"
       @click="closeMobileMenu"
-      class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+      class="fixed inset-0 bg-black/30 z-30 lg:hidden"
     ></div>
 
     <!-- Scrollable Content Area -->
-    <div class="scrollable-content lg:ml-72">
-      <main class="px-0 sm:px-4 lg:px-8 py-0 sm:py-8">
+    <div :class="['scrollable-content lg:ml-72', { 'browser-mode': isBrowserMode }]">
+      <main class="px-0 sm:px-4 lg:px-8 py-0 sm:px-4 lg:px-8 py-0 sm:py-8 pb-20 lg:pb-8">
         <!-- Page content will be inserted here -->
         <div class="w-full">
           <slot />
@@ -61,10 +77,39 @@
       </main>
     </div>
   </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav :class="['mobile-bottom-nav lg:hidden', { 'transparent': isBottomNavTransparent }]">
+    <div class="flex justify-around items-center h-full">
+      <!-- Home -->
+      <NuxtLink to="/" class="nav-item" @click="handleNavClick">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span class="text-xs mt-1">Главная</span>
+      </NuxtLink>
+
+      <!-- Subjects -->
+      <NuxtLink to="/subjects" class="nav-item" @click="handleNavClick">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span class="text-xs mt-1">Предметы</span>
+      </NuxtLink>
+
+      <!-- Collections -->
+      <NuxtLink to="/collections" class="nav-item" @click="handleNavClick">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <span class="text-xs mt-1">Коллекции</span>
+      </NuxtLink>
+    </div>
+  </nav>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import SidebarMenu from '~/components/SidebarMenu.vue'
 
 // Mobile menu state
@@ -77,9 +122,20 @@ const menuState = reactive({
 const isMenuOpen = computed(() => menuState.isOpen)
 const menuForceUpdate = computed(() => menuState.forceUpdate)
 
+// Detect if running in browser or PWA mode
+const isBrowserMode = ref(false)
+
+// Header transparency state
+const isHeaderTransparent = ref(false)
+
+// Bottom navigation transparency state
+const isBottomNavTransparent = ref(false)
+
 // Mobile menu functions
-const toggleMobileMenu = async () => {
-  console.log('Toggle mobile menu clicked, current state:', menuState.isOpen)
+const toggleMobileMenu = async (event) => {
+  console.log('Toggle mobile menu clicked, current state:', menuState.isOpen, 'Event:', event)
+  event.preventDefault()
+  event.stopPropagation()
   menuState.isOpen = !menuState.isOpen
   menuState.forceUpdate++
   await nextTick()
@@ -91,6 +147,12 @@ const closeMobileMenu = () => {
   console.log('Menu closed, state:', menuState.isOpen)
 }
 
+// Handle navigation clicks
+const handleNavClick = (event) => {
+  console.log('Navigation clicked:', event.target.closest('a')?.href)
+  closeMobileMenu()
+}
+
 // Handle background click
 const handleBackgroundClick = (event: Event) => {
   // Only close menu if clicking outside the menu and button
@@ -100,8 +162,95 @@ const handleBackgroundClick = (event: Event) => {
   }
 }
 
+// Handle scroll for header and bottom nav transparency
+const handleScroll = () => {
+  const scrollableContent = document.querySelector('.scrollable-content')
+  if (!scrollableContent) return
+  
+  const scrollY = scrollableContent.scrollTop
+  const scrollHeight = scrollableContent.scrollHeight
+  const clientHeight = scrollableContent.clientHeight
+  
+  const headerThreshold = 50 // Начинаем делать прозрачным после 50px прокрутки
+  const bottomNavThreshold = 100 // Нижнее меню становится прозрачным после 100px прокрутки
+  
+  // Header transparency
+  if (scrollY > headerThreshold) {
+    isHeaderTransparent.value = true
+  } else {
+    isHeaderTransparent.value = false
+  }
+  
+  // Bottom nav transparency - проверяем, есть ли контент под меню
+  const distanceFromBottom = scrollHeight - scrollY - clientHeight
+  const hasContentBelow = distanceFromBottom > 50 // Есть контент под меню (с запасом 50px)
+  
+  // Меню становится прозрачным только если есть контент под меню
+  if (hasContentBelow) {
+    isBottomNavTransparent.value = true
+  } else {
+    isBottomNavTransparent.value = false
+  }
+}
+
 // Параллакс эффект при движении мыши
 onMounted(() => {
+  // Detect if running in browser or PWA mode
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+  const isInApp = window.navigator.standalone === true
+  isBrowserMode.value = !isStandalone && !isInApp
+  
+  console.log('App mode detection:', {
+    isStandalone,
+    isInApp,
+    isBrowserMode: isBrowserMode.value
+  })
+  
+  // Add scroll listener for header transparency to scrollable content
+  const scrollableContent = document.querySelector('.scrollable-content')
+  if (scrollableContent) {
+    scrollableContent.addEventListener('scroll', handleScroll, { passive: true })
+  }
+
+  // Block overscroll on headers and menu (but allow clicks on buttons)
+  const preventOverscroll = (e) => {
+    // Allow clicks on buttons and interactive elements
+    if (e.target.closest('button') || e.target.closest('a') || e.target.closest('[role="button"]')) {
+      return
+    }
+    e.preventDefault()
+    e.stopPropagation()
+    return false
+  }
+
+  // Add event listeners to prevent overscroll
+  const header = document.querySelector('.mobile-header')
+  const sidebar = document.querySelector('.sidebar-menu')
+  
+  if (header) {
+    header.addEventListener('touchstart', preventOverscroll, { passive: false })
+    header.addEventListener('touchmove', preventOverscroll, { passive: false })
+    header.addEventListener('touchend', preventOverscroll, { passive: false })
+  }
+  
+  if (sidebar) {
+    sidebar.addEventListener('touchstart', preventOverscroll, { passive: false })
+    sidebar.addEventListener('touchmove', preventOverscroll, { passive: false })
+    sidebar.addEventListener('touchend', preventOverscroll, { passive: false })
+  }
+
+  // Watch for menu open/close to apply additional protection
+  watch(isMenuOpen, (isOpen) => {
+    if (isOpen) {
+      // When menu opens, add additional protection
+      const openMenu = document.querySelector('.sidebar-menu.menu-open')
+      if (openMenu) {
+        openMenu.addEventListener('touchstart', preventOverscroll, { passive: false })
+        openMenu.addEventListener('touchmove', preventOverscroll, { passive: false })
+        openMenu.addEventListener('touchend', preventOverscroll, { passive: false })
+      }
+    }
+  })
   let mouseX = 0
   let mouseY = 0
   let isMoving = false
@@ -222,6 +371,13 @@ onMounted(() => {
   onUnmounted(() => {
     document.removeEventListener('mousemove', handleMouseMove)
     document.removeEventListener('mouseleave', handleMouseLeave)
+    
+    // Remove scroll listener from scrollable content
+    const scrollableContent = document.querySelector('.scrollable-content')
+    if (scrollableContent) {
+      scrollableContent.removeEventListener('scroll', handleScroll)
+    }
+    
     if (animationFrame) {
       cancelAnimationFrame(animationFrame)
     }

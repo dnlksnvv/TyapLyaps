@@ -2,7 +2,7 @@
   <div
     @click="handleCardClick"
     :class="[
-      'glass-card tetris-card group relative overflow-hidden p-4 cursor-pointer',
+      'glass-card tetris-card group relative overflow-hidden p-4 cursor-pointer touch-manipulation',
       getProgressClass(subject.currentProgress),
       { 'expanded': isCardExpanded }
     ]"
@@ -18,8 +18,8 @@
     
     <!-- Header -->
     <div class="relative z-20">
-      <!-- Notification icon in top right corner -->
-      <div class="absolute top-0 right-0 z-30 notification-icon" @click.stop>
+    <!-- Notification icon in top right corner -->
+    <div class="absolute top-0 right-0 z-30 notification-icon" @click.stop>
         <svg 
           class="w-4 h-4 transition-colors duration-200"
           :class="subject.hasNotification ? 'text-white' : 'text-gray-500'"
@@ -37,26 +37,9 @@
         ></div>
       </div>
       
-      <!-- Expand/Collapse button in bottom right corner (narrow screens only) -->
-      <button 
-        v-if="isNarrowScreen"
-        @click.stop="toggleCardExpansion"
-        class="absolute bottom-0 right-0 z-30 notification-icon"
-        :title="isCardExpanded ? 'Свернуть' : 'Развернуть'"
-      >
-        <svg 
-          class="w-4 h-4 transition-all duration-200 text-gray-500"
-          :class="{ 'rotate-180': isCardExpanded }"
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
       
       <!-- Title with reserved space for 2 lines -->
-      <div class="mb-2 pr-8 h-12 flex items-start">
+      <div class="mb-1 pr-6 h-12 flex items-start">
         <h3 
           :class="[
             'adaptive-title text-xl font-semibold text-white drop-shadow-lg',
@@ -67,70 +50,8 @@
         </h3>
       </div>
       
-      <!-- Professor moved below title -->
-      <div class="flex items-center text-sm mb-4 text-gray-300 drop-shadow-md">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-        {{ subject.professor }}
-      </div>
-      
-      <!-- Progress tags -->
-      <div class="progress-tags-bottom">
-        <div class="flex flex-wrap gap-1">
-          <!-- Labs tag with dot -->
-          <span 
-            v-if="subject.totalLabs > 0"
-            class="progress-tag bg-blue-500/20 text-blue-300 border-blue-500/30 inline-flex items-center gap-1"
-            @click.stop
-          >
-            {{ subject.completedLabs }}/{{ subject.totalLabs }} лаб
-            <div 
-              class="w-1.5 h-1.5 rounded-full notification-dot"
-              :class="subject.hasLabNotification ? 'bg-red-500' : 'bg-gray-500'"
-            ></div>
-          </span>
-          
-          <!-- Attestations tag with dot -->
-          <span 
-            v-if="subject.totalAttestations > 0"
-            class="progress-tag bg-green-500/20 text-green-300 border-green-500/30 inline-flex items-center gap-1"
-            @click.stop
-          >
-            {{ subject.completedAttestations || 0 }}/{{ subject.totalAttestations || 0 }} атт
-            <div 
-              class="w-1.5 h-1.5 rounded-full notification-dot"
-              :class="subject.hasAttestationNotification ? 'bg-red-500' : 'bg-gray-500'"
-            ></div>
-          </span>
-          
-          <!-- Courseworks tag with dot -->
-          <span 
-            v-if="subject.totalCourseworks > 0"
-            class="progress-tag bg-purple-500/20 text-purple-300 border-purple-500/30 inline-flex items-center gap-1"
-            @click.stop
-          >
-            {{ subject.completedCourseworks || 0 }}/{{ subject.totalCourseworks || 0 }} курсач
-            <div 
-              class="w-1.5 h-1.5 rounded-full notification-dot"
-              :class="subject.hasCourseworkNotification ? 'bg-red-500' : 'bg-gray-500'"
-            ></div>
-          </span>
-          
-          <!-- Add tasks button for empty subjects -->
-          <span 
-            v-if="subject.totalLabs === 0 && subject.totalAttestations === 0 && subject.totalCourseworks === 0"
-            class="progress-tag bg-gray-500/20 text-gray-500 border-gray-500/30 inline-flex items-center gap-1 cursor-pointer hover:bg-gray-500/30 transition-colors"
-            @click.stop="addTasksToSubject"
-          >
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Добавить задачи
-          </span>
-        </div>
-      </div>
     </div>
+    
   </div>
 </template>
 
@@ -139,6 +60,17 @@ import { ref, computed, onMounted } from 'vue'
 import WaveEffect from './WaveEffect.vue'
 
 // Types
+interface SubjectTag {
+  id: string
+  text: string
+  total: number
+  completed: number
+  bgClass: string
+  textClass: string
+  borderClass: string
+  hasNotification: boolean
+}
+
 interface Subject {
   id: string
   name: string
@@ -158,6 +90,7 @@ interface Subject {
   hasAttestationNotification: boolean
   hasCourseworkNotification: boolean
   status: 'active' | 'completed' | 'paused'
+  tags?: SubjectTag[]
 }
 
 // Props
@@ -193,11 +126,11 @@ const getProgressClass = (progress: number) => {
 const getTitleClass = (title: string) => {
   const length = title.length
   
-  if (length > 120) {
+  if (length > 150) {
     return 'extremely-long-title'
-  } else if (length > 80) {
+  } else if (length > 100) {
     return 'very-long-title'
-  } else if (length > 50) {
+  } else if (length > 60) {
     return 'long-title'
   }
   
@@ -208,11 +141,11 @@ const handleCardClick = (event: Event) => {
   emit('cardClick', props.subject.id, event)
 }
 
-const toggleCardExpansion = () => {
-  emit('toggleExpansion', props.subject.id)
-}
-
 const addTasksToSubject = () => {
   emit('addTasks', props.subject.id)
 }
 </script>
+
+<style scoped>
+/* Component specific styles */
+</style>

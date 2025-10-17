@@ -2,6 +2,29 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* 🎨 ЦВЕТОВАЯ ПАЛИТРА - CSS ПЕРЕМЕННЫЕ */
+:root {
+  /* Основные цвета */
+  --color-pink: #E7726F;                    /* Новый розовый RGB(231, 114, 111) */
+  --color-pink-rgba: rgba(231, 114, 111, 0.3); /* Розовый с прозрачностью */
+  --color-cyan: #00FFFF;                    /* Голубой */
+  --color-cyan-rgba: rgba(0, 255, 255, 0.1);   /* Голубой с прозрачностью */
+  
+  /* Цвета тегов */
+  --color-tag-blue: #3B82F6;               /* Синий для лаб */
+  --color-tag-green: #10B981;              /* Зеленый для аттестаций */
+  --color-tag-purple: #8B5CF6;             /* Фиолетовый для курсачей */
+  --color-tag-gray: #6B7280;               /* Серый для пустых */
+  
+  /* Цвета карточек */
+  --color-card-dark: #211D20;              /* Темный для развернутых карточек */
+  --color-card-bg: #000000;                /* Черный фон */
+  
+  /* Цвета уведомлений */
+  --color-notification: #EF4444;           /* Красный для уведомлений */
+  --color-notification-dot: #DC2626;       /* Темно-красный для точек */
+}
+
 /* 🚀 MOBILE GPU OPTIMIZATIONS - КРИТИЧЕСКИ ВАЖНО */
 @layer base {
   /* Принудительное использование GPU для всех элементов */
@@ -223,139 +246,81 @@
   
   .glass-card {
     background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(20px) saturate(200%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: var(--apple-border-radius) !important;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+    box-shadow: none !important;
     position: relative !important;
     overflow: hidden !important;
-    
-    /* 🚀 КРИТИЧЕСКИЕ GPU ОПТИМИЗАЦИИ */
-    will-change: transform, opacity, box-shadow !important;
-    -webkit-transform: translateZ(0) !important;
-    transform: translateZ(0) !important;
-    -webkit-backface-visibility: hidden !important;
-    backface-visibility: hidden !important;
-    -webkit-perspective: 1000px !important;
-    perspective: 1000px !important;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-    contain: layout style paint !important;
-    isolation: isolate !important;
   }
   
-  .glass-card::after {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: linear-gradient(135deg, 
-      rgba(120, 119, 198, 0.1) 0%, 
-      rgba(255, 119, 198, 0.1) 25%,
-      rgba(120, 219, 255, 0.1) 50%,
-      rgba(255, 219, 120, 0.1) 75%,
-      rgba(120, 119, 198, 0.1) 100%) !important;
-    border-radius: var(--apple-border-radius) !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-    opacity: 0 !important;
-    transition: opacity 0.4s ease !important;
-  }
-  
-  .glass-card::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.1) 0%, 
-      rgba(255, 255, 255, 0.05) 25%,
-      rgba(255, 255, 255, 0.02) 50%,
-      rgba(255, 255, 255, 0.05) 75%,
-      rgba(255, 255, 255, 0.1) 100%) !important;
-    border-radius: var(--apple-border-radius) !important;
-    pointer-events: none !important;
-    z-index: 2 !important;
-    opacity: 0.6 !important;
-  }
   
   .glass-card > * {
     position: relative !important;
     z-index: 3 !important;
   }
   
-  /* Hover эффекты только для карточек, НЕ для меню */
-  .glass-card:not(.sidebar-menu):hover {
-    background: rgba(255, 255, 255, 0.001) !important;
+  /* Простые hover эффекты без glass */
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
-    transform: translateY(-8px) scale(1.02) !important;
-    box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(255, 255, 255, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      0 0 20px rgba(120, 119, 198, 0.3) !important;
-  }
-  
-  /* Disable hover lift effect on narrow screens */
-  @media (max-width: 480px) {
-    .glass-card:not(.sidebar-menu):hover {
-      transform: none !important;
-    }
-  }
-  
-  .glass-card:not(.sidebar-menu):hover::after {
-    opacity: 1 !important;
-  }
-  
-  .glass-card:not(.sidebar-menu):hover::before {
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.2) 0%, 
-      rgba(255, 255, 255, 0.1) 25%,
-      rgba(255, 255, 255, 0.05) 50%,
-      rgba(255, 255, 255, 0.1) 75%,
-      rgba(255, 255, 255, 0.2) 100%) !important;
-    opacity: 1 !important;
+    transform: translateY(-2px) !important;
   }
   
   .glass-button {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
   }
   
   .glass-button:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: scale(1.05) translateY(-2px);
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
   }
   
   .glass-header {
-    background: rgba(0, 0, 0, 0.8) !important;
+    background: rgba(0, 0, 0, 1) !important;
     backdrop-filter: blur(20px) saturate(200%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 
-      0 1px 0 rgba(255, 255, 255, 0.05),
-      0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    position: relative !important;
+    width: 100% !important;
+    height: 4rem !important;
+    pointer-events: auto !important;
+    transition: background 0.3s ease !important;
   }
+
+  /* Mobile header styles - PWA mode */
+  .mobile-header {
+    background: rgba(0, 0, 0, 1) !important;
+    backdrop-filter: blur(20px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    height: 6rem !important;
+    position: relative !important;
+    width: 100% !important;
+    pointer-events: auto !important;
+    transition: background 0.3s ease !important;
+  }
+
+  /* Mobile header styles - Browser mode */
+  .mobile-header.browser-mode {
+    background: rgba(0, 0, 0, 1) !important;
+    backdrop-filter: blur(20px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    height: 3rem !important;
+    position: relative !important;
+    width: 100% !important;
+    pointer-events: auto !important;
+    transition: background 0.3s ease !important;
+  }
+
   
 }
 
@@ -413,16 +378,166 @@
   will-change: transform !important;
 }
 
-/* Убираем полосы прокрутки */
+/* Убираем полосы прокрутки и предотвращаем прокрутку страницы */
 html, body {
   overflow-x: hidden !important;
   overflow-y: auto !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  position: relative !important;
+  height: 100% !important;
+}
+
+/* Предотвращаем прокрутку всего документа */
+#__nuxt {
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  position: relative !important;
+  height: 100% !important;
+}
+
+/* Header Container - полностью независимый от страницы */
+.header-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  pointer-events: none !important;
+  transform: translateZ(0) !important;
+  will-change: auto !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: none !important;
+}
+
+/* Main Content Container */
+.main-content-container {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  background: #000000 !important;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  transform: translateX(0) !important;
+}
+
+/* Menu open state - push content to the right (mobile only) */
+@media (max-width: 1023px) {
+  .main-content-container.menu-open {
+    transform: translateX(200px) !important;
+  }
+}
+
+/* Sidebar menu styles */
+.sidebar-menu {
+  background: rgba(0, 0, 0, 0.9) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    4px 0 16px rgba(0, 0, 0, 0.3),
+    inset -1px 0 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Desktop sidebar - always visible */
+@media (min-width: 1024px) {
+  .sidebar-menu {
+    position: static !important;
+    transform: none !important;
+    width: 18rem !important;
+    height: auto !important;
+  }
+}
+
+/* Mobile sidebar - slides in from left */
+@media (max-width: 1023px) {
+  .sidebar-menu {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 20rem !important;
+    height: 100vh !important;
+    z-index: 40 !important;
+  }
+}
+
+/* Header transparency classes */
+.glass-header.transparent {
+  background: rgba(82, 82, 82, 0.125) !important;
+}
+
+.mobile-header.transparent {
+  background: rgba(86, 86, 86, 0.086) !important;
+}
+
+.mobile-header.browser-mode.transparent {
+  background: rgba(86, 86, 86, 0.086) !important;
+}
+
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 5rem !important;
+  background: rgba(0, 0, 0, 1) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+  border-top: none !important;
+  box-shadow: 
+    0 -4px 16px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1000 !important;
+  transition: background 0.3s ease !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: none !important;
+  transform: translateZ(0) !important;
+  will-change: auto !important;
+}
+
+/* Bottom nav transparency */
+.mobile-bottom-nav.transparent {
+  background: rgba(86, 86, 86, 0.086) !important;
+}
+
+/* Navigation items */
+.nav-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 0.4rem 0.5rem 0.5rem 0.5rem !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  border-radius: 0.5rem !important;
+  min-width: 4rem !important;
+  height: 100% !important;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.nav-item:hover {
+  color: rgba(255, 255, 255, 1) !important;
+  transform: scale(1.05) !important;
+}
+
+.nav-item:active {
+  transform: scale(0.95) !important;
+}
+
+/* Active state for current page */
+.nav-item.router-link-active {
+  color: rgba(255, 255, 255, 1) !important;
 }
 
 /* Убираем ВСЕ hover эффекты с блока меню */
 .sidebar-menu:hover {
   /* Никаких изменений при hover на меню */
 }
+
 
 /* Убираем glow анимацию с меню */
 .sidebar-menu {
@@ -449,6 +564,9 @@ html, body {
     0 0 0 1px rgba(255, 255, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
   animation: none !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
 }
 
 /* Mobile menu styles */
@@ -523,6 +641,211 @@ html, body {
   container-type: inline-size;
 }
 
+/* Square collection type cards */
+.tetris-card.collection-type {
+  height: 150px !important;
+  min-height: 150px !important;
+  width: var(--card-width, 150px) !important; /* Используем CSS переменную или 150px по умолчанию */
+  min-width: 150px !important;
+  max-width: 300px !important;
+  padding: 1rem !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+}
+
+/* Динамическое масштабирование иконки и текста в зависимости от ширины карточки */
+.tetris-card.collection-type {
+  --scale-factor: calc(var(--card-width, 150px) / 150px);
+}
+
+.tetris-card.collection-type .h-20 {
+  height: calc(5rem * var(--scale-factor)) !important;
+}
+
+.tetris-card.collection-type .w-16 {
+  width: calc(4rem * var(--scale-factor)) !important;
+}
+
+.tetris-card.collection-type .h-16 {
+  height: calc(4rem * var(--scale-factor)) !important;
+}
+
+.tetris-card.collection-type .w-8 {
+  width: calc(2rem * var(--scale-factor)) !important;
+}
+
+.tetris-card.collection-type .h-8 {
+  height: calc(2rem * var(--scale-factor)) !important;
+}
+
+  .tetris-card.collection-type .text-lg {
+    font-size: calc(0.875rem * var(--scale-factor)) !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    text-align: center !important;
+    /* ЖЕСТКИЕ ограничения по ширине */
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    /* Принудительный перенос БЕЗ -webkit-box */
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+    /* Ограничение высоты */
+    max-height: calc(2.4rem * var(--scale-factor)) !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+
+/* Адаптивные размеры текста в зависимости от длины */
+.tetris-card.collection-type .text-lg.long-title {
+  font-size: calc(0.9rem * var(--scale-factor)) !important; /* Уменьшаем больше */
+  /* padding будет устанавливаться динамически через JavaScript */
+}
+
+.tetris-card.collection-type .text-lg.very-long-title {
+  font-size: calc(0.8rem * var(--scale-factor)) !important; /* Уменьшаем еще больше */
+  /* padding будет устанавливаться динамически через JavaScript */
+}
+
+.tetris-card.collection-type .text-lg.extremely-long-title {
+  font-size: calc(0.7rem * var(--scale-factor)) !important; /* Минимальный размер */
+  /* padding будет устанавливаться динамически через JavaScript */
+  -webkit-line-clamp: 3 !important; /* Разрешаем 3 строки для очень длинных названий */
+  max-height: calc(3.6rem * var(--scale-factor)) !important; /* 3 строки */
+}
+
+/* Grid for adaptive square collection type cards */
+.square-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+}
+
+/* ПРИНУДИТЕЛЬНОЕ ограничение текста в карточках коллекций */
+.tetris-card.collection-type {
+  overflow: hidden !important;
+}
+
+.tetris-card.collection-type .text-lg {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+/* Responsive behavior for square cards */
+@media (max-width: 768px) {
+  .tetris-card.collection-type {
+    height: 130px !important;
+    min-height: 130px !important;
+    width: var(--card-width, 130px) !important;
+    min-width: 130px !important;
+    max-width: 260px !important;
+  }
+  
+  /* Уменьшаем иконку и текст на планшете */
+  .tetris-card.collection-type .h-20 {
+    height: 3.5rem !important; /* 56px вместо 80px */
+  }
+  
+  .tetris-card.collection-type .w-16 {
+    width: 3rem !important; /* 48px вместо 64px */
+  }
+  
+  .tetris-card.collection-type .h-16 {
+    height: 3rem !important; /* 48px вместо 64px */
+  }
+  
+  .tetris-card.collection-type .w-8 {
+    width: 1.5rem !important; /* 24px вместо 32px */
+  }
+  
+  .tetris-card.collection-type .h-8 {
+    height: 1.5rem !important; /* 24px вместо 32px */
+  }
+  
+  .tetris-card.collection-type .text-lg {
+    font-size: 0.875rem !important; /* 14px вместо 18px */
+    /* padding будет устанавливаться динамически через JavaScript */
+  }
+  
+  .tetris-card.collection-type .text-lg.long-title {
+    font-size: 0.75rem !important; /* 12px */
+  }
+  
+  .tetris-card.collection-type .text-lg.very-long-title {
+    font-size: 0.625rem !important; /* 10px */
+  }
+  
+  .tetris-card.collection-type .text-lg.extremely-long-title {
+    font-size: 0.5rem !important; /* 8px */
+    -webkit-line-clamp: 3 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tetris-card.collection-type {
+    height: 110px !important;
+    min-height: 110px !important;
+    width: var(--card-width, 110px) !important;
+    min-width: 110px !important;
+    max-width: 220px !important;
+  }
+  
+  /* Уменьшаем иконку и текст на мобильном */
+  .tetris-card.collection-type .h-20 {
+    height: 3rem !important; /* 48px */
+  }
+  
+  .tetris-card.collection-type .w-16 {
+    width: 2.5rem !important; /* 40px */
+  }
+  
+  .tetris-card.collection-type .h-16 {
+    height: 2.5rem !important; /* 40px */
+  }
+  
+  .tetris-card.collection-type .w-8 {
+    width: 1.25rem !important; /* 20px */
+  }
+  
+  .tetris-card.collection-type .h-8 {
+    height: 1.25rem !important; /* 20px */
+  }
+  
+  .tetris-card.collection-type .text-lg {
+    font-size: 0.75rem !important; /* 12px */
+    /* padding будет устанавливаться динамически через JavaScript */
+  }
+  
+  .tetris-card.collection-type .text-lg.long-title {
+    font-size: 0.625rem !important; /* 10px */
+  }
+  
+  .tetris-card.collection-type .text-lg.very-long-title {
+    font-size: 0.5rem !important; /* 8px */
+  }
+  
+  .tetris-card.collection-type .text-lg.extremely-long-title {
+    font-size: 0.375rem !important; /* 6px */
+    -webkit-line-clamp: 3 !important;
+  }
+}
+
 /* Water effect for progress */
 .water-container {
   position: absolute !important;
@@ -576,29 +899,29 @@ html, body {
   /* SVG animation handles movement */
 }
 
-.tetris-card.low-progress {
-  height: 170px !important;
+.tetris-card.low-progress:not(.collection-type) {
+  height: 154px !important;
   min-width: 300px !important;
   flex: 1 !important;
   background: rgba(128, 128, 128, 0.1) !important;
 }
 
-.tetris-card.medium-progress {
-  height: 170px !important;
+.tetris-card.medium-progress:not(.collection-type) {
+  height: 154px !important;
   min-width: 300px !important;
   flex: 1 !important;
   background: rgba(128, 128, 128, 0.1) !important;
 }
 
-.tetris-card.high-progress {
-  height: 170px !important;
+.tetris-card.high-progress:not(.collection-type) {
+  height: 154px !important;
   min-width: 300px !important;
   flex: 1 !important;
   background: rgba(128, 128, 128, 0.1) !important;
 }
 
-.tetris-card.completed {
-  height: 170px !important;
+.tetris-card.completed:not(.collection-type) {
+  height: 154px !important;
   min-width: 300px !important;
   flex: 1 !important;
   background: rgba(128, 128, 128, 0.1) !important;
@@ -607,13 +930,30 @@ html, body {
 
 /* Прокручиваемый контент */
 .scrollable-content {
-  position: fixed !important;
-  top: 5rem !important;
+  position: absolute !important;
+  top: 0 !important;
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
   overflow-y: auto !important;
   z-index: 10 !important;
+  padding-top: 4rem !important;
+  background: #000000 !important;
+  min-height: 100vh !important;
+}
+
+/* Mobile scrollable content - учитываем высоту мобильного хедера */
+@media (max-width: 1023px) {
+  .scrollable-content {
+    padding-top: 7rem !important;
+    background: #000000 !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Browser mode - меньший отступ для меньшего хедера */
+  .scrollable-content.browser-mode {
+    padding-top: 4rem !important;
+  }
 }
 
 /* Hover эффекты для пунктов меню */
@@ -665,6 +1005,24 @@ html, body {
 .menu-item > * {
   position: relative !important;
   z-index: 2 !important;
+}
+
+/* Открытое меню - дополнительная защита от overscroll */
+.sidebar-menu.menu-open {
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 50 !important;
 }
 
 /* Custom CSS Variables for Theme */
@@ -786,6 +1144,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh !important;
   position: relative !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y !important;
 }
 
 @keyframes floatingOrbs {
@@ -877,12 +1238,12 @@ textarea:focus {
   height: 60px !important;
 }
 
-.tetris-card.low-progress,
-.tetris-card.medium-progress,
-.tetris-card.high-progress,
-.tetris-card.completed {
-  min-height: 170px !important;
-  height: 170px !important;
+.tetris-card.low-progress:not(.collection-type),
+.tetris-card.medium-progress:not(.collection-type),
+.tetris-card.high-progress:not(.collection-type),
+.tetris-card.completed:not(.collection-type) {
+  min-height: 154px !important;
+  height: 154px !important;
 }
 
 /* Smooth content transition */
@@ -998,18 +1359,7 @@ button:active {
   font-size: 1.25rem; /* 20px - default */
 }
 
-/* For very long titles, reduce font size */
-.adaptive-title:has-text[length > 50] {
-  font-size: 1.125rem; /* 18px */
-}
-
-.adaptive-title:has-text[length > 80] {
-  font-size: 1rem; /* 16px */
-}
-
-.adaptive-title:has-text[length > 120] {
-  font-size: 0.875rem; /* 14px */
-}
+/* For very long titles, reduce font size - using classes instead of :has() */
 
 /* Fallback for browsers that don't support :has() */
 .adaptive-title.long-title {
@@ -1033,15 +1383,6 @@ button:active {
   gap: 0.5rem;
 }
 
-/* Progress tags at the bottom of card */
-.progress-tags-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-top: auto;
-  padding-top: 1rem;
-  gap: 0.5rem;
-}
 
 .progress-tag {
   padding: 0.25rem 0.5rem;
@@ -1120,7 +1461,7 @@ button:active {
 /* Responsive behavior for narrow screens */
 @media (max-width: 768px) {
   .tetris-card.expanded {
-    height: 170px !important;
+    height: 154px !important;
   }
 }
 
@@ -1144,12 +1485,13 @@ button:active {
     --text-6xl: 2.5rem;     /* 40px */
   }
   
-  .tetris-card,
-  .tetris-card.low-progress,
-  .tetris-card.medium-progress,
-  .tetris-card.high-progress,
-  .tetris-card.completed {
-    height: 100px !important;
+  .tetris-card:not(.collection-type),
+  .tetris-card.low-progress:not(.collection-type),
+  .tetris-card.medium-progress:not(.collection-type),
+  .tetris-card.high-progress:not(.collection-type),
+  .tetris-card.completed:not(.collection-type) {
+    height: 154px !important;
+    padding-bottom: 2rem !important;
   }
   
   .adaptive-title {
@@ -1180,14 +1522,6 @@ button:active {
     margin-top: auto;
   }
   
-  .progress-tags-bottom {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.25rem;
-    margin-top: auto;
-    padding-top: 1.5rem;
-  }
   
   .notification-dot {
     width: 5px;
@@ -1200,7 +1534,7 @@ button:active {
   
   
   .tetris-card.expanded {
-    height: 170px !important;
+    height: 154px !important;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
   }
@@ -1209,20 +1543,22 @@ button:active {
 /* Mobile styles - must be at the end to override other rules */
 @media (max-width: 480px) {
   /* Override all card height rules for mobile */
-  .glass-card.tetris-card,
-  .glass-card.tetris-card.low-progress,
-  .glass-card.tetris-card.medium-progress,
-  .glass-card.tetris-card.high-progress,
-  .glass-card.tetris-card.completed {
-    height: 100px !important;
-    min-height: 100px !important;
+  .glass-card.tetris-card:not(.collection-type),
+  .glass-card.tetris-card.low-progress:not(.collection-type),
+  .glass-card.tetris-card.medium-progress:not(.collection-type),
+  .glass-card.tetris-card.high-progress:not(.collection-type),
+  .glass-card.tetris-card.completed:not(.collection-type) {
+    height: 78px !important;
+    min-height: 78px !important;
+    padding-bottom: 2rem !important;
   }
   
   .glass-card.tetris-card.expanded {
-    height: 170px !important;
-    min-height: 170px !important;
+    height: 154px !important;
+    min-height: 154px !important;
     margin-top: 1rem;
     margin-bottom: 0.5rem;
+    padding-bottom: 2rem !important;
   }
 }
 
@@ -1249,3 +1585,266 @@ button:active {
     min-height: 140px !important;
   }
 }
+
+/* Стили для карточек добавления */
+.add-card {
+  background: #E7726F !important;
+  border: 1px solid rgba(231, 114, 111, 0.3) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.add-card::before,
+.add-card::after {
+  display: none !important;
+}
+
+.add-card:hover {
+  background: #C885B8 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* КРИТИЧЕСКИ ВАЖНО: Стили для развернутого состояния карточек добавления - ДОЛЖНЫ БЫТЬ В КОНЦЕ */
+.glass-card.tetris-card.add-card.expanded {
+  background: #211D20 !important;
+  border: 1px solid #E7726F !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.glass-card.tetris-card.add-card.expanded::before,
+.glass-card.tetris-card.add-card.expanded::after {
+  display: none !important;
+}
+
+.glass-card.tetris-card.add-card.expanded:hover {
+  background: #2A2528 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ОТКЛЮЧАЕМ ВСЕ GLASS ЭФФЕКТЫ ДЛЯ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card {
+  background: #E7726F !important;
+  border: 1px solid rgba(231, 114, 111, 0.3) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.glass-card.tetris-card.add-card::before,
+.glass-card.tetris-card.add-card::after {
+  display: none !important;
+}
+
+.glass-card.tetris-card.add-card:hover {
+  background: #C885B8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+}
+
+.glass-card.tetris-card.add-card:hover::before,
+.glass-card.tetris-card.add-card:hover::after {
+  display: none !important;
+}
+
+/* ОТКЛЮЧАЕМ GLASS ЭФФЕКТЫ ДЛЯ ВСЕХ ЭЛЕМЕНТОВ ВНУТРИ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card .glass-effect {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.glass-card.tetris-card.add-card .glass-effect:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* АГРЕССИВНОЕ ОТКЛЮЧЕНИЕ ВСЕХ ВОЗМОЖНЫХ ЭФФЕКТОВ ДЛЯ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.glass-card.tetris-card.add-card *::before,
+.glass-card.tetris-card.add-card *::after {
+  display: none !important;
+}
+
+/* ПОЛНОЕ ОТКЛЮЧЕНИЕ GLASS ЭФФЕКТОВ ДЛЯ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card {
+  background: #E7726F !important;
+  border: 1px solid rgba(231, 114, 111, 0.3) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border-radius: 24px !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  will-change: transform !important;
+  -webkit-transform: translateZ(0) !important;
+  transform: translateZ(0) !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  -webkit-perspective: 1000px !important;
+  perspective: 1000px !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  contain: layout style paint !important;
+  isolation: isolate !important;
+}
+
+.glass-card.tetris-card.add-card::before,
+.glass-card.tetris-card.add-card::after {
+  display: none !important;
+  content: none !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: none !important;
+  border-radius: none !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+.glass-card.tetris-card.add-card > * {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+.glass-card.tetris-card.add-card:hover {
+  background: #C885B8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+  border-color: rgba(211, 147, 198, 0.5) !important;
+}
+
+.glass-card.tetris-card.add-card:hover::before,
+.glass-card.tetris-card.add-card:hover::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* ОТКЛЮЧАЕМ GLASS ЭФФЕКТЫ ДЛЯ ВСЕХ КНОПОК И ЭЛЕМЕНТОВ В КАРТОЧКАХ ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card button,
+.glass-card.tetris-card.add-card .glass-effect {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+
+.glass-card.tetris-card.add-card button:hover,
+.glass-card.tetris-card.add-card .glass-effect:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.glass-card.tetris-card.add-card button::before,
+.glass-card.tetris-card.add-card button::after,
+.glass-card.tetris-card.add-card .glass-effect::before,
+.glass-card.tetris-card.add-card .glass-effect::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* КРИТИЧЕСКИ ВАЖНО: ОТКЛЮЧАЕМ ГЛОБАЛЬНЫЕ HOVER ЭФФЕКТЫ ДЛЯ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card:hover {
+  background: #C885B8 !important;
+  border-color: rgba(211, 147, 198, 0.5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+}
+
+.glass-card.tetris-card.add-card:hover::before,
+.glass-card.tetris-card.add-card:hover::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  background: none !important;
+}
+
+/* ОТКЛЮЧАЕМ ВСЕ ВОЗМОЖНЫЕ HOVER ЭФФЕКТЫ ДЛЯ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card:not(.sidebar-menu):hover {
+  background: #C885B8 !important;
+  border-color: rgba(211, 147, 198, 0.5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+}
+
+.glass-card.tetris-card.add-card:not(.sidebar-menu):hover::before,
+.glass-card.tetris-card.add-card:not(.sidebar-menu):hover::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  background: none !important;
+}
+
+/* КРИТИЧЕСКИ ВАЖНО: ОТКЛЮЧАЕМ ВСЕ ГРАДИЕНТНЫЕ НАЛОЖЕНИЯ ДЛЯ КАРТОЧЕК ДОБАВЛЕНИЯ */
+.glass-card.tetris-card.add-card::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
+
+.glass-card.tetris-card.add-card::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
+
+.glass-card.tetris-card.add-card:hover::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
+
+.glass-card.tetris-card.add-card:hover::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  opacity: 0 !important;
+}
+
+/* Простые стили для карточек добавления без glass эффектов */
+.glass-card.add-card {
+  background: #E7726F !important;
+  border: 1px solid rgba(231, 114, 111, 0.3) !important;
+  border-radius: 24px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: none !important;
+}
+
+.glass-card.add-card:hover {
+  background: #C885B8 !important;
+  border-color: rgba(211, 147, 198, 0.5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+}
+
+.glass-card.add-card.expanded {
+  background: #211D20 !important;
+  border: 1px solid #E7726F !important;
+}
+
+.glass-card.add-card.expanded:hover {
+  background: #2A2528 !important;
+  transform: translateY(-2px) !important;
+}
+

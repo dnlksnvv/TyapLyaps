@@ -103,25 +103,15 @@ const generateRealTimeWave = (progress: number) => {
 }
 
 const getWaveColor = (progress: number) => {
-  // Динамический цвет на основе прогресса
-  // 0% = яркий красный, 50% = яркий желтый, 100% = яркий зеленый
-  let red, green, blue
+  // Равномерный переход от красного к голубому по всему диапазону
+  // 0% = красный (255, 0, 0), 100% = голубой (0, 255, 255)
+  const ratio = progress / 100
   
-  if (progress <= 50) {
-    // От яркого красного к яркому желтому (0-50%)
-    const ratio = progress / 50
-    red = 255
-    green = Math.floor(255 * ratio) // от 0 до 255
-    blue = 0
-  } else {
-    // От яркого желтого к яркому зеленому (50-100%)
-    const ratio = (progress - 50) / 50
-    red = Math.floor(255 * (1 - ratio)) // от 255 до 0
-    green = 255
-    blue = 0
-  }
+  const red = Math.floor(255 * (1 - ratio))     // от 255 до 0
+  const green = Math.floor(255 * ratio)         // от 0 до 255
+  const blue = Math.floor(255 * ratio)          // от 0 до 255
   
-  const alpha = 0.2
+  const alpha = 0.4
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`
 }
 

@@ -1,4 +1,15 @@
 // Types
+export interface SubjectTag {
+  id: string
+  text: string
+  total: number
+  completed: number
+  bgClass: string
+  textClass: string
+  borderClass: string
+  hasNotification: boolean
+}
+
 export interface Subject {
   id: string
   name: string
@@ -18,6 +29,7 @@ export interface Subject {
   hasAttestationNotification: boolean
   hasCourseworkNotification: boolean
   status: 'active' | 'completed' | 'paused'
+  tags?: SubjectTag[]
 }
 
 export interface User {
@@ -86,17 +98,49 @@ export const mockSubjects: Subject[] = [
     professor: 'Иванов И.И.',
     credits: 4,
     currentProgress: 0,
-    totalLabs: 9,
-    completedLabs: 1,
-    totalAttestations: 2,
-    completedAttestations: 0,
-    totalCourseworks: 1,
+    totalLabs: 12,
+    completedLabs: 3,
+    totalAttestations: 3,
+    completedAttestations: 1,
+    totalCourseworks: 2,
     completedCourseworks: 0,
     hasNotification: true,
     hasLabNotification: true,
-    hasAttestationNotification: false,
+    hasAttestationNotification: true,
     hasCourseworkNotification: true,
-    status: 'active'
+    status: 'active',
+    tags: [
+      {
+        id: 'labs',
+        text: 'лабы',
+        total: 12,
+        completed: 3,
+        bgClass: 'bg-blue-500/20',
+        textClass: 'text-blue-300',
+        borderClass: 'border-blue-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'attestations',
+        text: 'аттестации',
+        total: 3,
+        completed: 1,
+        bgClass: 'bg-green-500/20',
+        textClass: 'text-green-300',
+        borderClass: 'border-green-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'courseworks',
+        text: 'курсачи',
+        total: 2,
+        completed: 0,
+        bgClass: 'bg-purple-500/20',
+        textClass: 'text-purple-300',
+        borderClass: 'border-purple-500/30',
+        hasNotification: true
+      }
+    ]
   },
   {
     id: '2',
@@ -110,13 +154,45 @@ export const mockSubjects: Subject[] = [
     completedLabs: 7,
     totalAttestations: 3,
     completedAttestations: 1,
-    totalCourseworks: 1,
+    totalCourseworks: 2,
     completedCourseworks: 0,
     hasNotification: false,
     hasLabNotification: false,
     hasAttestationNotification: true,
     hasCourseworkNotification: false,
-    status: 'active'
+    status: 'active',
+    tags: [
+      {
+        id: 'labs',
+        text: 'лабы',
+        total: 15,
+        completed: 7,
+        bgClass: 'bg-blue-500/20',
+        textClass: 'text-blue-300',
+        borderClass: 'border-blue-500/30',
+        hasNotification: false
+      },
+      {
+        id: 'attestations',
+        text: 'аттестации',
+        total: 3,
+        completed: 1,
+        bgClass: 'bg-green-500/20',
+        textClass: 'text-green-300',
+        borderClass: 'border-green-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'courseworks',
+        text: 'курсачи',
+        total: 2,
+        completed: 0,
+        bgClass: 'bg-purple-500/20',
+        textClass: 'text-purple-300',
+        borderClass: 'border-purple-500/30',
+        hasNotification: false
+      }
+    ]
   },
   {
     id: '3',
@@ -126,17 +202,49 @@ export const mockSubjects: Subject[] = [
     professor: 'Сидоров С.С.',
     credits: 3,
     currentProgress: 50,
-    totalLabs: 6,
-    completedLabs: 5,
-    totalAttestations: 2,
-    completedAttestations: 1,
-    totalCourseworks: 0,
+    totalLabs: 8,
+    completedLabs: 6,
+    totalAttestations: 3,
+    completedAttestations: 2,
+    totalCourseworks: 1,
     completedCourseworks: 0,
     hasNotification: true,
-    hasLabNotification: false,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: false,
-    status: 'active'
+    hasLabNotification: true,
+    hasAttestationNotification: true,
+    hasCourseworkNotification: true,
+    status: 'active',
+    tags: [
+      {
+        id: 'labs',
+        text: 'лабы',
+        total: 8,
+        completed: 6,
+        bgClass: 'bg-blue-500/20',
+        textClass: 'text-blue-300',
+        borderClass: 'border-blue-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'attestations',
+        text: 'аттестации',
+        total: 3,
+        completed: 2,
+        bgClass: 'bg-green-500/20',
+        textClass: 'text-green-300',
+        borderClass: 'border-green-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'courseworks',
+        text: 'курсачи',
+        total: 1,
+        completed: 0,
+        bgClass: 'bg-purple-500/20',
+        textClass: 'text-purple-300',
+        borderClass: 'border-purple-500/30',
+        hasNotification: true
+      }
+    ]
   },
   {
     id: '4',
@@ -156,7 +264,29 @@ export const mockSubjects: Subject[] = [
     hasLabNotification: false,
     hasAttestationNotification: false,
     hasCourseworkNotification: false,
-    status: 'completed'
+    status: 'completed',
+    tags: [
+      {
+        id: 'labs',
+        text: 'лабы',
+        total: 4,
+        completed: 4,
+        bgClass: 'bg-blue-500/20',
+        textClass: 'text-blue-300',
+        borderClass: 'border-blue-500/30',
+        hasNotification: false
+      },
+      {
+        id: 'attestations',
+        text: 'аттестации',
+        total: 1,
+        completed: 1,
+        bgClass: 'bg-green-500/20',
+        textClass: 'text-green-300',
+        borderClass: 'border-green-500/30',
+        hasNotification: false
+      }
+    ]
   },
   {
     id: '5',
@@ -176,7 +306,39 @@ export const mockSubjects: Subject[] = [
     hasLabNotification: true,
     hasAttestationNotification: true,
     hasCourseworkNotification: false,
-    status: 'active'
+    status: 'active',
+    tags: [
+      {
+        id: 'labs',
+        text: 'лабы',
+        total: 12,
+        completed: 3,
+        bgClass: 'bg-blue-500/20',
+        textClass: 'text-blue-300',
+        borderClass: 'border-blue-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'attestations',
+        text: 'аттестации',
+        total: 2,
+        completed: 0,
+        bgClass: 'bg-green-500/20',
+        textClass: 'text-green-300',
+        borderClass: 'border-green-500/30',
+        hasNotification: true
+      },
+      {
+        id: 'courseworks',
+        text: 'курсачи',
+        total: 1,
+        completed: 0,
+        bgClass: 'bg-purple-500/20',
+        textClass: 'text-purple-300',
+        borderClass: 'border-purple-500/30',
+        hasNotification: false
+      }
+    ]
   },
   {
     id: '6',
@@ -196,7 +358,39 @@ export const mockSubjects: Subject[] = [
     hasLabNotification: false,
     hasAttestationNotification: false,
     hasCourseworkNotification: false,
-    status: 'active'
+    status: 'active',
+    tags: [
+      {
+        id: 'labs',
+        text: 'лабы',
+        total: 8,
+        completed: 7,
+        bgClass: 'bg-blue-500/20',
+        textClass: 'text-blue-300',
+        borderClass: 'border-blue-500/30',
+        hasNotification: false
+      },
+      {
+        id: 'attestations',
+        text: 'аттестации',
+        total: 2,
+        completed: 1,
+        bgClass: 'bg-green-500/20',
+        textClass: 'text-green-300',
+        borderClass: 'border-green-500/30',
+        hasNotification: false
+      },
+      {
+        id: 'courseworks',
+        text: 'курсачи',
+        total: 1,
+        completed: 1,
+        bgClass: 'bg-purple-500/20',
+        textClass: 'text-purple-300',
+        borderClass: 'border-purple-500/30',
+        hasNotification: false
+      }
+    ]
   }
 ]
 

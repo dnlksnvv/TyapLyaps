@@ -4,7 +4,7 @@
   <div class="px-4 sm:px-6 lg:px-8 mb-8">
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 parallax-element">
     <StatsCard
-      :value="tasks.length"
+      :value="subjects.length"
       label="Всего предметов"
       icon="subjects"
     />
@@ -32,11 +32,11 @@
   <!-- Tasks Grid -->
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="tetris-grid parallax-element">
-    <TaskCard
-      v-for="task in tasks"
-      :key="task.id"
-      :task="task"
-      :is-expanded="isCardExpanded(task.id)"
+    <SubjectCard
+      v-for="subject in subjects"
+      :key="subject.id"
+      :subject="subject"
+      :is-expanded="isCardExpanded(subject.id)"
       :is-narrow-screen="isNarrowScreen"
       @card-click="handleCardClick"
       @toggle-expansion="toggleCardExpansion"
@@ -69,10 +69,10 @@ definePageMeta({
 })
 
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import TaskCard from '~/components/TaskCard.vue'
+import SubjectCard from '~/components/SubjectCard.vue'
 import AddTaskCard from '~/components/AddTaskCard.vue'
 import StatsCard from '~/components/StatsCard.vue'
-import { mockCollections, mockTasks, type Collection, type Task } from '~/data/mockData'
+import { mockSubjects, type Subject } from '~/data/mockData'
 
 // Collection ID is hardcoded to '1'
 const collectionId = '1'
@@ -93,21 +93,21 @@ const expandedCards = ref<Set<string>>(new Set())
 const isNarrowScreen = ref(false)
 
 // Data
-const tasks = ref<Task[]>([])
+const subjects = ref<Subject[]>([])
 
 // Computed properties
 const completedTasks = computed(() => {
-  return tasks.value.filter(task => task.progress === 100).length
+  return subjects.value.filter(subject => subject.currentProgress === 100).length
 })
 
 const totalLabs = computed(() => {
-  return tasks.value.reduce((total, task) => total + task.totalLabs, 0)
+  return subjects.value.reduce((total, subject) => total + subject.totalLabs, 0)
 })
 
 const overallProgress = computed(() => {
-  if (tasks.value.length === 0) return 0
-  const totalProgress = tasks.value.reduce((sum, task) => sum + task.progress, 0)
-  return Math.round(totalProgress / tasks.value.length)
+  if (subjects.value.length === 0) return 0
+  const totalProgress = subjects.value.reduce((sum, subject) => sum + subject.currentProgress, 0)
+  return Math.round(totalProgress / subjects.value.length)
 })
 
 // Card expansion functions
@@ -124,7 +124,7 @@ const toggleCardExpansion = (cardId: string) => {
 }
 
 // Handle card click based on card state
-const handleCardClick = (taskId: string, event: Event) => {
+const handleCardClick = (subjectId: string, event: Event) => {
   // Close creation form if open
   if (isCreatingTask.value) {
     cancelCreateTask()
@@ -132,21 +132,21 @@ const handleCardClick = (taskId: string, event: Event) => {
   
   if (isNarrowScreen.value) {
     // On narrow screens: close all other cards first, then toggle current
-    if (!isCardExpanded(taskId)) {
+    if (!isCardExpanded(subjectId)) {
       console.log('Expanding card')
       // Close all other cards first
       expandedCards.value.clear()
       // Then expand current card
-      toggleCardExpansion(taskId)
+      toggleCardExpansion(subjectId)
     } else {
-      console.log('Navigating to task details')
-      // Navigate to task details page
-      window.location.href = `/tasks/${taskId}`
+      console.log('Navigating to subject details')
+      // Navigate to subject details page
+      window.location.href = `/subjects/${subjectId}`
     }
   } else {
     // On wide screens: always navigate
-    console.log('Navigating to task details')
-    window.location.href = `/tasks/${taskId}`
+    console.log('Navigating to subject details')
+    window.location.href = `/subjects/${subjectId}`
   }
 }
 
@@ -249,14 +249,14 @@ const updateScreenSize = () => {
 }
 
 // Load data
-const loadTasks = () => {
-  tasks.value = mockTasks.filter(task => task.collectionId === collectionId)
-  console.log('Loaded tasks for collection:', collectionId, tasks.value)
+const loadSubjects = () => {
+  subjects.value = mockSubjects
+  console.log('Loaded subjects:', subjects.value)
 }
 
 // Lifecycle
 onMounted(() => {
-  loadTasks()
+  loadSubjects()
   updateScreenSize()
   window.addEventListener('resize', updateScreenSize)
 })

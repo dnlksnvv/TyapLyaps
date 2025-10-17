@@ -2,9 +2,9 @@
   <aside 
     :class="[
       'glass-card sidebar-menu p-6',
-      'fixed left-0 top-24 z-40 transform transition-transform duration-300 ease-in-out',
-      'lg:translate-x-0',
-      isOpen ? 'translate-x-0' : '-translate-x-full'
+      'fixed left-0 top-0 z-40 h-full w-80 transform transition-transform duration-300 ease-in-out',
+      'lg:translate-x-0 lg:static lg:block',
+      isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
     ]"
   >
     <nav class="space-y-4">

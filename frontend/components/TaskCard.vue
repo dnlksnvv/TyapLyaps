@@ -18,8 +18,8 @@
     
     <!-- Header -->
     <div class="relative z-20">
-      <!-- Notification icon in top right corner -->
-      <div class="absolute top-0 right-0 z-30 notification-icon" @click.stop>
+    <!-- Notification icon in top right corner -->
+    <div class="absolute top-0 right-0 z-30 notification-icon" @click.stop>
         <svg 
           class="w-4 h-4 transition-colors duration-200"
           :class="task.hasNotification ? 'text-white' : 'text-gray-500'"
@@ -37,26 +37,9 @@
         ></div>
       </div>
       
-      <!-- Expand/Collapse button in bottom right corner (narrow screens only) -->
-      <button 
-        v-if="isNarrowScreen"
-        @click.stop="toggleCardExpansion"
-        class="absolute bottom-0 right-0 z-30 notification-icon"
-        :title="isCardExpanded ? 'Свернуть' : 'Развернуть'"
-      >
-        <svg 
-          class="w-4 h-4 transition-all duration-200 text-gray-500"
-          :class="{ 'rotate-180': isCardExpanded }"
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
       
       <!-- Title with reserved space for 2 lines -->
-      <div class="mb-2 pr-8 h-12 flex items-start">
+      <div class="mb-2 pr-6 h-12 flex items-start">
         <h3 
           :class="[
             'adaptive-title text-xl font-semibold text-white drop-shadow-lg',
@@ -67,70 +50,8 @@
         </h3>
       </div>
       
-      <!-- Description moved below title -->
-      <div class="flex items-center text-sm mb-4 text-gray-300 drop-shadow-md">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {{ task.description }}
-      </div>
-      
-      <!-- Progress tags -->
-      <div class="progress-tags-bottom">
-        <div class="flex flex-wrap gap-1">
-          <!-- Labs tag with dot -->
-          <span 
-            v-if="task.totalLabs > 0"
-            class="progress-tag bg-blue-500/20 text-blue-300 border-blue-500/30 inline-flex items-center gap-1"
-            @click.stop
-          >
-            {{ task.completedLabs }}/{{ task.totalLabs }} лаб
-            <div 
-              class="w-1.5 h-1.5 rounded-full notification-dot"
-              :class="task.hasLabNotification ? 'bg-red-500' : 'bg-gray-500'"
-            ></div>
-          </span>
-          
-          <!-- Attestations tag with dot -->
-          <span 
-            v-if="task.totalAttestations > 0"
-            class="progress-tag bg-green-500/20 text-green-300 border-green-500/30 inline-flex items-center gap-1"
-            @click.stop
-          >
-            {{ task.completedAttestations || 0 }}/{{ task.totalAttestations || 0 }} атт
-            <div 
-              class="w-1.5 h-1.5 rounded-full notification-dot"
-              :class="task.hasAttestationNotification ? 'bg-red-500' : 'bg-gray-500'"
-            ></div>
-          </span>
-          
-          <!-- Courseworks tag with dot -->
-          <span 
-            v-if="task.totalCourseworks > 0"
-            class="progress-tag bg-purple-500/20 text-purple-300 border-purple-500/30 inline-flex items-center gap-1"
-            @click.stop
-          >
-            {{ task.completedCourseworks || 0 }}/{{ task.totalCourseworks || 0 }} курсач
-            <div 
-              class="w-1.5 h-1.5 rounded-full notification-dot"
-              :class="task.hasCourseworkNotification ? 'bg-red-500' : 'bg-gray-500'"
-            ></div>
-          </span>
-          
-          <!-- Add tasks button for empty tasks -->
-          <span 
-            v-if="task.totalLabs === 0 && task.totalAttestations === 0 && task.totalCourseworks === 0"
-            class="progress-tag bg-gray-500/20 text-gray-500 border-gray-500/30 inline-flex items-center gap-1 cursor-pointer hover:bg-gray-500/30 transition-colors"
-            @click.stop="addTasksToTask"
-          >
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Добавить задачи
-          </span>
-        </div>
-      </div>
     </div>
+    
   </div>
 </template>
 
@@ -197,11 +118,11 @@ const getProgressClass = (progress: number) => {
 const getTitleClass = (title: string) => {
   const length = title.length
   
-  if (length > 120) {
+  if (length > 150) {
     return 'extremely-long-title'
-  } else if (length > 80) {
+  } else if (length > 100) {
     return 'very-long-title'
-  } else if (length > 50) {
+  } else if (length > 60) {
     return 'long-title'
   }
   
