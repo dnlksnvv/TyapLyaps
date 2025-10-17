@@ -118,6 +118,10 @@ npm run start
 2. Тестирование в ветке `production`
 3. Слияние в `main` для релиза
 
+### 📝 Правила коммитов:
+- [Conventional Commits](docs/COMMIT_RULES.md) - Подробные правила
+- [Примеры коммитов](docs/COMMIT_EXAMPLES.md) - Готовые шаблоны
+
 ## 🤝 Вклад в проект
 
 1. Форкните репозиторий
