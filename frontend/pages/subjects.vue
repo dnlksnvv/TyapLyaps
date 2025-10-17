@@ -207,7 +207,7 @@ const saveNewTask = () => {
     completedAttestations: 0,
     totalCourseworks: 0,
     completedCourseworks: 0,
-    hasNotification: false,
+    notificationCount: 0,
     hasLabNotification: false,
     hasAttestationNotification: false,
     hasCourseworkNotification: false,

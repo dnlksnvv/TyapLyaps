@@ -26,10 +26,12 @@
         >
           <svg 
             class="w-7 h-7 text-white drop-shadow-lg"
-            fill="currentColor" 
+            fill="none" 
+            stroke="currentColor" 
             viewBox="0 0 24 24"
+            stroke-width="2"
           >
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
       </div>
@@ -53,18 +55,14 @@ import { computed, ref, onMounted, nextTick, watch } from 'vue'
 import WaveEffect from './WaveEffect.vue'
 
 // Types
-interface Collection {
+interface CollectionType {
   id: string
   name: string
-  content: string
-  description: string
   color: string
   progress: number
+  order: number
   itemsCount: number
-  parentId?: string
-  type: 'collection' | 'task'
-  hasNotification?: boolean
-  tags?: CollectionTag[]
+  notificationCount?: number
   createdAt: string
   updatedAt: string
 }
@@ -75,12 +73,12 @@ interface CollectionTag {
   bgClass: string
   textClass: string
   borderClass: string
-  hasNotification: boolean
+  notificationCount: number
 }
 
 // Props
 interface Props {
-  collection: Collection
+  collection: CollectionType
   isExpanded?: boolean
   isNarrowScreen?: boolean
 }

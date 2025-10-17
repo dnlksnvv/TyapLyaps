@@ -87,56 +87,13 @@ import StatsCard from '~/components/StatsCard.vue'
 import CollectionCard from '~/components/CollectionCard.vue'
 import CollectionTypeCard from '~/components/CollectionTypeCard.vue'
 import AddCollectionCard from '~/components/AddCollectionCard.vue'
-import { mockCollections, type Collection } from '~/data/mockData'
+import { mockCollections, mockCollectionTypes, type Collection, type CollectionType } from '~/data/mockData'
 
 // Data
 const collections = ref<Collection[]>([])
 
 // Square collection types data
-const collectionTypes = ref([
-  {
-    id: 'type-1',
-    name: 'Программирование',
-    color: '#3B82F6',
-    progress: 75,
-    hasNotification: true
-  },
-  {
-    id: 'type-2', 
-    name: 'Математика',
-    color: '#10B981',
-    progress: 60,
-    hasNotification: false
-  },
-  {
-    id: 'type-3',
-    name: 'Физика',
-    color: '#8B5CF6',
-    progress: 45,
-    hasNotification: true
-  },
-  {
-    id: 'type-4',
-    name: 'Химия',
-    color: '#F59E0B',
-    progress: 30,
-    hasNotification: false
-  },
-  {
-    id: 'type-5',
-    name: 'История',
-    color: '#EF4444',
-    progress: 90,
-    hasNotification: false
-  },
-  {
-    id: 'type-6',
-    name: 'Литература',
-    color: '#06B6D4',
-    progress: 15,
-    hasNotification: true
-  }
-])
+const collectionTypes = ref<CollectionType[]>([])
 
 // Collection creation state
 const isCreatingCollection = ref(false)
@@ -268,7 +225,7 @@ const saveNewCollection = () => {
     progress: 0,
     itemsCount: 0,
     type: 'collection',
-    hasNotification: false,
+    notificationCount: 0,
     tags: [],
     createdAt: new Date().toISOString().split('T')[0],
     updatedAt: new Date().toISOString().split('T')[0]
@@ -433,6 +390,7 @@ const handleResize = () => {
 // Lifecycle
 onMounted(() => {
   collections.value = mockCollections
+  collectionTypes.value = mockCollectionTypes.sort((a, b) => a.order - b.order)
   updateScreenSize()
   window.addEventListener('resize', handleResize)
   

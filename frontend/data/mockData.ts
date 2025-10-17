@@ -7,7 +7,7 @@ export interface SubjectTag {
   bgClass: string
   textClass: string
   borderClass: string
-  hasNotification: boolean
+  notificationCount: number
 }
 
 export interface Subject {
@@ -24,10 +24,10 @@ export interface Subject {
   completedAttestations?: number
   totalCourseworks?: number
   completedCourseworks?: number
-  hasNotification: boolean
-  hasLabNotification: boolean
-  hasAttestationNotification: boolean
-  hasCourseworkNotification: boolean
+  notificationCount: number
+  labNotificationCount: number
+  attestationNotificationCount: number
+  courseworkNotificationCount: number
   status: 'active' | 'completed' | 'paused'
   tags?: SubjectTag[]
 }
@@ -51,7 +51,7 @@ export interface Collection {
   itemsCount: number
   parentId?: string // Для вложенных коллекций
   type: 'collection' | 'task' // Тип элемента
-  hasNotification?: boolean // Уведомления для коллекции
+  notificationCount?: number // Количество уведомлений для коллекции
   tags?: CollectionTag[] // Теги из задач внутри коллекции
   createdAt: string
   updatedAt: string
@@ -63,7 +63,19 @@ export interface CollectionTag {
   bgClass: string
   textClass: string
   borderClass: string
-  hasNotification: boolean
+  notificationCount: number
+}
+
+export interface CollectionType {
+  id: string
+  name: string
+  color: string
+  progress: number
+  order: number
+  itemsCount: number
+  notificationCount?: number
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Task {
@@ -79,10 +91,10 @@ export interface Task {
   completedAttestations?: number
   totalCourseworks?: number
   completedCourseworks?: number
-  hasNotification: boolean
-  hasLabNotification: boolean
-  hasAttestationNotification: boolean
-  hasCourseworkNotification: boolean
+  notificationCount: number
+  labNotificationCount: number
+  attestationNotificationCount: number
+  courseworkNotificationCount: number
   status: 'active' | 'completed' | 'paused'
   createdAt: string
   updatedAt: string
@@ -104,10 +116,10 @@ export const mockSubjects: Subject[] = [
     completedAttestations: 1,
     totalCourseworks: 2,
     completedCourseworks: 0,
-    hasNotification: true,
-    hasLabNotification: true,
-    hasAttestationNotification: true,
-    hasCourseworkNotification: true,
+    notificationCount: 1,
+    labNotificationCount: 1,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 1,
     status: 'active',
     tags: [
       {
@@ -118,7 +130,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'attestations',
@@ -128,7 +140,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'courseworks',
@@ -138,7 +150,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-purple-500/20',
         textClass: 'text-purple-300',
         borderClass: 'border-purple-500/30',
-        hasNotification: true
+        notificationCount: 1
       }
     ]
   },
@@ -156,10 +168,10 @@ export const mockSubjects: Subject[] = [
     completedAttestations: 1,
     totalCourseworks: 2,
     completedCourseworks: 0,
-    hasNotification: false,
-    hasLabNotification: false,
-    hasAttestationNotification: true,
-    hasCourseworkNotification: false,
+    notificationCount: 0,
+    labNotificationCount: 0,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 0,
     status: 'active',
     tags: [
       {
@@ -170,7 +182,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: false
+        notificationCount: 0
       },
       {
         id: 'attestations',
@@ -180,7 +192,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'courseworks',
@@ -190,7 +202,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-purple-500/20',
         textClass: 'text-purple-300',
         borderClass: 'border-purple-500/30',
-        hasNotification: false
+        notificationCount: 0
       }
     ]
   },
@@ -208,10 +220,10 @@ export const mockSubjects: Subject[] = [
     completedAttestations: 2,
     totalCourseworks: 1,
     completedCourseworks: 0,
-    hasNotification: true,
-    hasLabNotification: true,
-    hasAttestationNotification: true,
-    hasCourseworkNotification: true,
+    notificationCount: 1,
+    labNotificationCount: 1,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 1,
     status: 'active',
     tags: [
       {
@@ -222,7 +234,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'attestations',
@@ -232,7 +244,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'courseworks',
@@ -242,7 +254,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-purple-500/20',
         textClass: 'text-purple-300',
         borderClass: 'border-purple-500/30',
-        hasNotification: true
+        notificationCount: 1
       }
     ]
   },
@@ -260,10 +272,10 @@ export const mockSubjects: Subject[] = [
     completedAttestations: 1,
     totalCourseworks: 0,
     completedCourseworks: 0,
-    hasNotification: false,
-    hasLabNotification: false,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: false,
+    notificationCount: 0,
+    labNotificationCount: 0,
+    attestationNotificationCount: 0,
+    courseworkNotificationCount: 0,
     status: 'completed',
     tags: [
       {
@@ -274,7 +286,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: false
+        notificationCount: 0
       },
       {
         id: 'attestations',
@@ -284,7 +296,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: false
+        notificationCount: 0
       }
     ]
   },
@@ -302,10 +314,10 @@ export const mockSubjects: Subject[] = [
     completedAttestations: 0,
     totalCourseworks: 1,
     completedCourseworks: 0,
-    hasNotification: true,
-    hasLabNotification: true,
-    hasAttestationNotification: true,
-    hasCourseworkNotification: false,
+    notificationCount: 1,
+    labNotificationCount: 1,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 0,
     status: 'active',
     tags: [
       {
@@ -316,7 +328,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'attestations',
@@ -326,7 +338,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: 'courseworks',
@@ -336,7 +348,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-purple-500/20',
         textClass: 'text-purple-300',
         borderClass: 'border-purple-500/30',
-        hasNotification: false
+        notificationCount: 0
       }
     ]
   },
@@ -354,10 +366,10 @@ export const mockSubjects: Subject[] = [
     completedAttestations: 1,
     totalCourseworks: 1,
     completedCourseworks: 1,
-    hasNotification: false,
-    hasLabNotification: false,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: false,
+    notificationCount: 0,
+    labNotificationCount: 0,
+    attestationNotificationCount: 0,
+    courseworkNotificationCount: 0,
     status: 'active',
     tags: [
       {
@@ -368,7 +380,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: false
+        notificationCount: 0
       },
       {
         id: 'attestations',
@@ -378,7 +390,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: false
+        notificationCount: 0
       },
       {
         id: 'courseworks',
@@ -388,7 +400,7 @@ export const mockSubjects: Subject[] = [
         bgClass: 'bg-purple-500/20',
         textClass: 'text-purple-300',
         borderClass: 'border-purple-500/30',
-        hasNotification: false
+        notificationCount: 0
       }
     ]
   }
@@ -413,7 +425,7 @@ export const mockCollections: Collection[] = [
     progress: 45,
     itemsCount: 8,
     type: 'collection',
-    hasNotification: true,
+    notificationCount: 1,
     tags: [
       {
         id: '1',
@@ -421,7 +433,7 @@ export const mockCollections: Collection[] = [
         bgClass: 'bg-blue-500/20',
         textClass: 'text-blue-300',
         borderClass: 'border-blue-500/30',
-        hasNotification: true
+        notificationCount: 1
       },
       {
         id: '2',
@@ -429,7 +441,7 @@ export const mockCollections: Collection[] = [
         bgClass: 'bg-green-500/20',
         textClass: 'text-green-300',
         borderClass: 'border-green-500/30',
-        hasNotification: false
+        notificationCount: 0
       },
       {
         id: '3',
@@ -437,11 +449,11 @@ export const mockCollections: Collection[] = [
         bgClass: 'bg-yellow-500/20',
         textClass: 'text-yellow-300',
         borderClass: 'border-yellow-500/30',
-        hasNotification: true
+        notificationCount: 1
       }
     ],
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-20'
+    createdAt: '2024-01-15T00:00:00.000Z',
+    updatedAt: '2024-01-20T00:00:00.000Z'
   }
 ]
 
@@ -459,13 +471,13 @@ export const mockTasks: Task[] = [
     completedAttestations: 0,
     totalCourseworks: 1,
     completedCourseworks: 0,
-    hasNotification: true,
-    hasLabNotification: true,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: true,
+    notificationCount: 1,
+    labNotificationCount: 1,
+    attestationNotificationCount: 0,
+    courseworkNotificationCount: 1,
     status: 'active',
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-20'
+    createdAt: '2024-01-15T00:00:00.000Z',
+    updatedAt: '2024-01-20T00:00:00.000Z'
   },
   {
     id: '2',
@@ -480,13 +492,13 @@ export const mockTasks: Task[] = [
     completedAttestations: 1,
     totalCourseworks: 1,
     completedCourseworks: 0,
-    hasNotification: false,
-    hasLabNotification: false,
-    hasAttestationNotification: true,
-    hasCourseworkNotification: false,
+    notificationCount: 0,
+    labNotificationCount: 0,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 0,
     status: 'active',
-    createdAt: '2024-01-10',
-    updatedAt: '2024-01-18'
+    createdAt: '2024-01-10T00:00:00.000Z',
+    updatedAt: '2024-01-18T00:00:00.000Z'
   },
   {
     id: '3',
@@ -501,13 +513,13 @@ export const mockTasks: Task[] = [
     completedAttestations: 1,
     totalCourseworks: 0,
     completedCourseworks: 0,
-    hasNotification: true,
-    hasLabNotification: false,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: false,
+    notificationCount: 3,
+    labNotificationCount: 2,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 0,
     status: 'active',
-    createdAt: '2024-01-05',
-    updatedAt: '2024-01-22'
+    createdAt: '2024-01-05T00:00:00.000Z',
+    updatedAt: '2024-01-22T00:00:00.000Z'
   },
   {
     id: '4',
@@ -522,13 +534,13 @@ export const mockTasks: Task[] = [
     completedAttestations: 1,
     totalCourseworks: 0,
     completedCourseworks: 0,
-    hasNotification: false,
-    hasLabNotification: false,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: false,
+    notificationCount: 0,
+    labNotificationCount: 0,
+    attestationNotificationCount: 0,
+    courseworkNotificationCount: 0,
     status: 'completed',
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-25'
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-25T00:00:00.000Z'
   },
   {
     id: '5',
@@ -543,13 +555,13 @@ export const mockTasks: Task[] = [
     completedAttestations: 0,
     totalCourseworks: 1,
     completedCourseworks: 0,
-    hasNotification: true,
-    hasLabNotification: true,
-    hasAttestationNotification: true,
-    hasCourseworkNotification: false,
+    notificationCount: 1,
+    labNotificationCount: 1,
+    attestationNotificationCount: 1,
+    courseworkNotificationCount: 0,
     status: 'active',
-    createdAt: '2024-01-12',
-    updatedAt: '2024-01-19'
+    createdAt: '2024-01-12T00:00:00.000Z',
+    updatedAt: '2024-01-19T00:00:00.000Z'
   },
   {
     id: '6',
@@ -564,12 +576,82 @@ export const mockTasks: Task[] = [
     completedAttestations: 1,
     totalCourseworks: 1,
     completedCourseworks: 1,
-    hasNotification: false,
-    hasLabNotification: false,
-    hasAttestationNotification: false,
-    hasCourseworkNotification: false,
+    notificationCount: 0,
+    labNotificationCount: 0,
+    attestationNotificationCount: 0,
+    courseworkNotificationCount: 0,
     status: 'active',
-    createdAt: '2024-01-08',
-    updatedAt: '2024-01-21'
+    createdAt: '2024-01-08T00:00:00.000Z',
+    updatedAt: '2024-01-21T00:00:00.000Z'
+  }
+]
+
+// Mock data for collection types
+export const mockCollectionTypes: CollectionType[] = [
+  {
+    id: 'type-1',
+    name: 'Программирование',
+    color: '#3B82F6',
+    progress: 75,
+    order: 1,
+    itemsCount: 12,
+    notificationCount: 1,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-21T00:00:00.000Z'
+  },
+  {
+    id: 'type-2',
+    name: 'Математика',
+    color: '#10B981',
+    progress: 60,
+    order: 2,
+    itemsCount: 8,
+    notificationCount: 0,
+    createdAt: '2024-01-02T00:00:00.000Z',
+    updatedAt: '2024-01-20T00:00:00.000Z'
+  },
+  {
+    id: 'type-3',
+    name: 'Физика',
+    color: '#F59E0B',
+    progress: 45,
+    order: 3,
+    itemsCount: 6,
+    notificationCount: 1,
+    createdAt: '2024-01-03T00:00:00.000Z',
+    updatedAt: '2024-01-19T00:00:00.000Z'
+  },
+  {
+    id: 'type-4',
+    name: 'Английский язык',
+    color: '#EF4444',
+    progress: 90,
+    order: 4,
+    itemsCount: 15,
+    notificationCount: 0,
+    createdAt: '2024-01-04T00:00:00.000Z',
+    updatedAt: '2024-01-22T00:00:00.000Z'
+  },
+  {
+    id: 'type-5',
+    name: 'История',
+    color: '#8B5CF6',
+    progress: 30,
+    order: 5,
+    itemsCount: 4,
+    notificationCount: 1,
+    createdAt: '2024-01-05T00:00:00.000Z',
+    updatedAt: '2024-01-18T00:00:00.000Z'
+  },
+  {
+    id: 'type-6',
+    name: 'Экономика',
+    color: '#06B6D4',
+    progress: 55,
+    order: 6,
+    itemsCount: 10,
+    notificationCount: 0,
+    createdAt: '2024-01-06T00:00:00.000Z',
+    updatedAt: '2024-01-17T00:00:00.000Z'
   }
 ]

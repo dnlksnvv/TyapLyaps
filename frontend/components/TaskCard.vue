@@ -22,7 +22,7 @@
     <div class="absolute top-0 right-0 z-30 notification-icon" @click.stop>
         <svg 
           class="w-4 h-4 transition-colors duration-200"
-          :class="task.hasNotification ? 'text-white' : 'text-gray-500'"
+          :class="(task.notificationCount || 0) > 0 ? 'text-white' : 'text-gray-500'"
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -32,7 +32,7 @@
         
         <!-- Red dot for notifications -->
         <div 
-          v-if="task.hasNotification"
+          v-if="(task.notificationCount || 0) > 0"
           class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full notification-dot"
         ></div>
       </div>
@@ -73,7 +73,7 @@ interface Task {
   completedAttestations?: number
   totalCourseworks?: number
   completedCourseworks?: number
-  hasNotification: boolean
+  notificationCount: number
   hasLabNotification: boolean
   hasAttestationNotification: boolean
   hasCourseworkNotification: boolean
