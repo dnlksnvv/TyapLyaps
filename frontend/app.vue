@@ -19,38 +19,56 @@ useHead({
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'mobile-web-app-capable', content: 'yes' },
     { name: 'apple-touch-fullscreen', content: 'yes' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover' },
+    { name: 'apple-mobile-web-app-orientations', content: 'portrait' },
+    { name: 'mobile-web-app-status-bar-style', content: 'black-translucent' },
+    { name: 'apple-touch-callout', content: 'no' }
   ],
   link: [
     { rel: 'manifest', href: '/manifest.json' },
     { rel: 'apple-touch-icon', href: '/icon-192x192.svg' },
-    { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' }
+    { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
+    // 🚀 КРИТИЧЕСКИЕ РЕСУРСЫ ДЛЯ БЫСТРОЙ ЗАГРУЗКИ
+    { rel: 'preload', href: '/assets/css/main.css', as: 'style' },
+    { rel: 'preload', href: '/icon.svg', as: 'image' },
+    { rel: 'preload', href: '/icon-192x192.svg', as: 'image' },
+    { rel: 'preload', href: '/icon-512x512.svg', as: 'image' },
+    { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' }
   ]
 })
 
-// Параллакс эффект при движении мыши (только для desktop)
+// 🚀 МОБИЛЬНЫЕ ОПТИМИЗАЦИИ И GPU УСКОРЕНИЕ
 onMounted(() => {
-  // iOS Touch Feedback Fix for Cards Only
-  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-    const disableCardTouchFeedback = (e) => {
-      const target = e.target
-      // Проверяем, что клик по карточке
-      if (target.closest('.glass-card') || target.closest('.tetris-card')) {
-        target.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)'
-        target.style.webkitTouchCallout = 'none'
-        target.style.webkitUserSelect = 'none'
-        
-        // Применяем ко всем родительским элементам карточки
-        let parent = target.parentElement
-        while (parent && !parent.classList.contains('glass-card') && !parent.classList.contains('tetris-card')) {
-          parent.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)'
-          parent = parent.parentElement
-        }
-      }
-    }
+  // Принудительное GPU ускорение для всех элементов
+  const allElements = document.querySelectorAll('*')
+  allElements.forEach(element => {
+    element.style.webkitTransform = 'translate3d(0, 0, 0)'
+    element.style.transform = 'translate3d(0, 0, 0)'
+    element.style.webkitBackfaceVisibility = 'hidden'
+    element.style.backfaceVisibility = 'hidden'
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)'
+    element.style.webkitTouchCallout = 'none'
+    element.style.webkitUserSelect = 'none'
+    element.style.touchAction = 'manipulation'
+  })
+
+  // Touch device optimizations - only apply to touch devices
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    // Дополнительные оптимизации для touch устройств
+    const cards = document.querySelectorAll('.glass-card, .tetris-card')
+    cards.forEach(card => {
+      card.style.webkitPerspective = '1000'
+      card.style.perspective = '1000'
+      card.style.willChange = 'transform, opacity'
+      card.style.contain = 'layout style paint'
+      card.style.isolation = 'isolate'
+    })
     
-    document.addEventListener('touchstart', disableCardTouchFeedback, true)
-    document.addEventListener('touchend', disableCardTouchFeedback, true)
+    // Отключаем анимации на мобильных для экономии батареи
+    document.body.style.setProperty('--animation-duration', '0s')
+    document.body.style.setProperty('--transition-duration', '0s')
   }
   
   // Отключаем параллакс на touch-устройствах для лучшей производительности

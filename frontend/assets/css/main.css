@@ -2,6 +2,33 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* 🚀 MOBILE GPU OPTIMIZATIONS - КРИТИЧЕСКИ ВАЖНО */
+@layer base {
+  /* Принудительное использование GPU для всех элементов */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+  }
+  
+  /* Оптимизация для мобильных устройств */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
 /* Extend Tailwind with custom colors */
 @layer base {
   :root {
@@ -207,6 +234,19 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
     position: relative !important;
     overflow: hidden !important;
+    
+    /* 🚀 КРИТИЧЕСКИЕ GPU ОПТИМИЗАЦИИ */
+    will-change: transform, opacity, box-shadow !important;
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-perspective: 1000px !important;
+    perspective: 1000px !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    contain: layout style paint !important;
+    isolation: isolate !important;
   }
   
   .glass-card::after {
@@ -319,38 +359,50 @@
   
 }
 
-/* Креативные анимированные элементы */
+/* 🚀 GPU-ОПТИМИЗИРОВАННЫЕ АНИМАЦИИ ДЛЯ МОБИЛЬНЫХ */
 @keyframes pulse {
   0%, 100% { 
     opacity: 0.4;
-    transform: scale(1);
+    transform: translateZ(0) scale(1);
   }
   50% { 
     opacity: 1;
-    transform: scale(1.1);
+    transform: translateZ(0) scale(1.1);
   }
 }
 
 @keyframes float {
   0%, 100% { 
-    transform: translateY(0px);
+    transform: translateZ(0) translateY(0px);
   }
   50% { 
-    transform: translateY(-10px);
+    transform: translateZ(0) translateY(-10px);
   }
 }
 
 @keyframes glow {
   0%, 100% { 
     box-shadow: 0 0 5px rgba(120, 119, 198, 0.3);
+    transform: translateZ(0);
   }
   50% { 
     box-shadow: 0 0 20px rgba(120, 119, 198, 0.6), 0 0 30px rgba(255, 119, 198, 0.4);
+    transform: translateZ(0);
   }
 }
 
-.glass-card {
-  animation: glow 3s ease-in-out infinite !important;
+/* Отключаем анимации на мобильных для экономии батареи */
+@media (max-width: 768px) {
+  .glass-card {
+    animation: none !important;
+  }
+}
+
+/* Включаем анимации только на десктопе */
+@media (min-width: 769px) {
+  .glass-card {
+    animation: glow 3s ease-in-out infinite !important;
+  }
 }
 
 /* Убираем дублирующий hover эффект - используем только специфичный выше */
